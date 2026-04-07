@@ -50,7 +50,7 @@ class TestTools extends Command
             });
 
         $response = Prism::text()
-            ->using(Provider::Ollama, 'llama3.2:1b')
+            ->using(Provider::Ollama, 'llama3.1:8b')
             ->withTools([$searchTool])
             ->withMaxSteps(3)
             ->withPrompt('Which cars do we have under $15,000?')

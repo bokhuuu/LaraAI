@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Prism\Prism\Facades\Prism;
 use Prism\Prism\Enums\Provider;
 
-class testAI extends Command
+class TestAI extends Command
 {
     /**
      * The name and signature of the console command.
