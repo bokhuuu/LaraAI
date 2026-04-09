@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands\Dev;
+namespace App\Console\Commands\Dev\Phase1;
 
 use Illuminate\Console\Command;
 use Prism\Prism\Facades\Prism;

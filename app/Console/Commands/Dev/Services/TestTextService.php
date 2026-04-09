@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands\Dev;
+namespace App\Console\Commands\Dev\Services;
 
 use App\AI\Services\TextGenerationService;
 use Illuminate\Console\Command;
