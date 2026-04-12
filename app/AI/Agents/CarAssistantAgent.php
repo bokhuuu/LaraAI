@@ -9,7 +9,7 @@ class CarAssistantAgent extends Agent
 {
     protected $name = 'CarAssistantAgent';
     protected $model = 'llama3.1:8b';
-    protected $history = 'in_memory';
+    protected $history = 'database';
     protected $provider = 'ollama';
     protected $tools = [];
 

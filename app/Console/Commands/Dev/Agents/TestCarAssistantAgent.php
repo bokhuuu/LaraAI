@@ -12,7 +12,7 @@ class TestCarAssistantAgent extends Command
 
     public function handle()
     {
-        $response = CarAssistantAgent::for('test_session')->respond('What Toyota cars do you have?');
+        $response = CarAssistantAgent::for('test_session')->respond('What was the price of the car you mentioned last time?');
         $this->info($response);
     }
 }
