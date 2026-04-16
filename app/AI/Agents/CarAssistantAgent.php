@@ -2,6 +2,7 @@
 
 namespace App\AI\Agents;
 
+use App\AI\Services\EmbeddingService;
 use LarAgent\Agent;
 use LarAgent\Attributes\Tool;
 
@@ -50,5 +51,16 @@ class CarAssistantAgent extends Agent
         ];
 
         return json_encode($cars);
+    }
+
+    #[Tool('Search car listings by description or requirements')]
+    public function searchListings(string $query): string
+    {
+        $service = new EmbeddingService();
+        $results = $service->search($query, 3);
+
+        $listings = $results->map(fn($result) => $result['document']->content)->toArray();
+
+        return json_encode($listings);
     }
 }
