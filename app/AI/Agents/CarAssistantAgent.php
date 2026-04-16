@@ -9,9 +9,9 @@ use LarAgent\Attributes\Tool;
 class CarAssistantAgent extends Agent
 {
     protected $name = 'CarAssistantAgent';
-    protected $model = 'llama3.1:8b';
+    protected $model = 'openrouter/free';
     protected $history = 'database';
-    protected $provider = 'ollama';
+    protected $provider = 'openrouter';
     protected $tools = [];
 
     public function instructions()
