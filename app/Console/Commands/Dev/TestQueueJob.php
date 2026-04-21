@@ -4,6 +4,7 @@ namespace App\Console\Commands\Dev;
 
 use App\Jobs\AnalyzeCarJob;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Bus;
 
 class TestQueueJob extends Command
 {
@@ -12,11 +13,33 @@ class TestQueueJob extends Command
 
     public function handle()
     {
-        $this->info('Dispatching job...');
+        $cars = [
+            'Red Ferrari F40 1992, sports car, 15000 km, price $500000',
+            'Blue Toyota Camry 2020, sedan, 30000 km, price $8000',
+            'Black BMW X5 2019, SUV, 45000 km, price $35000',
+        ];
 
-        AnalyzeCarJob::dispatch('Red Ferrari F40 1992, sports car, 15000 km, price $500000');
+        $jobs = collect($cars)->map(
+            fn($car) => new AnalyzeCarJob($car)
+        )->toArray();
 
-        $this->info('Job dispatched. Check jobs table in phpMyAdmin.');
-        $this->info('Run: php artisan queue:work to process it.');
+        $batch = Bus::batch($jobs)
+            ->then(function ($batch) {
+                \Log::info('All cars analyzed successfully', [
+                    'total' => $batch->totalJobs,
+                ]);
+            })
+            ->catch(function ($batch, $e) {
+                \Log::error('Batch failed', ['error' => $e->getMessage()]);
+            })
+            ->finally(function ($batch) {
+                \Log::info('Batch finished', [
+                    'processed' => $batch->processedJobs(),
+                    'failed' => $batch->failedJobs,
+                ]);
+            })
+            ->dispatch();
+
+        $this->info('Batch dispatched. ID: ' . $batch->id);
     }
 }
