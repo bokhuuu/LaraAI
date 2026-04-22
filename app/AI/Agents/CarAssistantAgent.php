@@ -13,6 +13,7 @@ class CarAssistantAgent extends Agent
     protected $history = 'database';
     protected $provider = 'openrouter';
     protected $tools = [];
+    protected $mcpServers = ['mcp_server_memory'];
 
     public function instructions()
     {

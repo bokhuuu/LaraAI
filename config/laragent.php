@@ -184,6 +184,9 @@ return [
                 '-y',
                 '@modelcontextprotocol/server-memory',
             ],
+            'env' => [
+                'MEMORY_FILE_PATH' => storage_path('app/mcp_memory.jsonl'),
+            ],
             'timeout' => 30,
             'cwd' => base_path(),
             // milliseconds - delay after process start (default: 100)

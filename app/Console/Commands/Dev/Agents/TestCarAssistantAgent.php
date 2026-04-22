@@ -12,9 +12,12 @@ class TestCarAssistantAgent extends Command
 
     public function handle()
     {
-        $response = CarAssistantAgent::for('rag_test')
-            ->respond('I need a reliable family car under $15,000');
+        $agent = CarAssistantAgent::for('mcp_test_2');
+        $response1 = $agent->respond('Please use the memory tool to store this: my name is Zura and I am looking for a Toyota under $15,000.');
+        $this->info('1: ' . $response1);
 
-        $this->info($response);
+        $agent2 = CarAssistantAgent::for('mcp_test_3');
+        $response2 = $agent2->respond('What do you know about Zura from the knowledge base?');
+        $this->info('2: ' . $response2);
     }
 }
