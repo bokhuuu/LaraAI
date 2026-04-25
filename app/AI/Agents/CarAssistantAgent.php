@@ -5,6 +5,7 @@ namespace App\AI\Agents;
 use App\AI\Services\EmbeddingService;
 use LarAgent\Agent;
 use LarAgent\Attributes\Tool;
+use App\AI\Services\PromptService;
 
 class CarAssistantAgent extends Agent
 {
@@ -17,7 +18,10 @@ class CarAssistantAgent extends Agent
 
     public function instructions()
     {
-        return 'You are a helpful car dealership assistant. Use available tools to answer questions accurately.';
+        return app(PromptService::class)->get(
+            'car_assistant',
+            'You are a helpful car dealership assistant.'
+        );
     }
 
     public function prompt($message)
