@@ -6,6 +6,7 @@ use Prism\Prism\Facades\Prism;
 use Prism\Prism\Enums\Provider;
 use App\AI\Services\UsageTrackingService;
 use App\AI\Services\RateLimitingService;
+use Illuminate\Support\Facades\Cache;
 
 class TextGenerationService
 {
@@ -21,26 +22,32 @@ class TextGenerationService
             throw new \RuntimeException('Rate limit exceeded for text generation');
         }
 
-        $request = Prism::text()
-            ->using(Provider::Ollama, 'llama3.2:1b')
-            ->withPrompt($prompt);
+        $cacheKey = 'ai_response:' . md5($systemPrompt . $prompt);
 
-        if ($systemPrompt) {
-            $request = $request->withSystemPrompt($systemPrompt);
-        }
+        $text = Cache::remember($cacheKey, ttl: 3600, callback: function () use ($prompt, $systemPrompt) {
+            $request = Prism::text()
+                ->using(Provider::Ollama, 'llama3.2:1b')
+                ->withPrompt($prompt);
 
-        $response = $request->asText();
+            if ($systemPrompt) {
+                $request = $request->withSystemPrompt($systemPrompt);
+            }
 
-        $this->usageTracker->track(
-            feature: 'text_generation',
-            provider: 'ollama',
-            model: 'llama3.2:1b',
-            promptTokens: $response->usage->promptTokens,
-            completionTokens: $response->usage->completionTokens,
-        );
+            $response = $request->asText();
+
+            $this->usageTracker->track(
+                feature: 'text_generation',
+                provider: 'ollama',
+                model: 'llama3.2:1b',
+                promptTokens: $response->usage->promptTokens,
+                completionTokens: $response->usage->completionTokens,
+            );
+
+            return $response->text;
+        });
 
         $this->rateLimiter->increment('text_generation', $userId);
 
-        return $response->text;
+        return $text;
     }
 }
