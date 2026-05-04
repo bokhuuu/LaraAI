@@ -27,7 +27,11 @@ class TextGenerationService
         $text = Cache::remember($cacheKey, ttl: 3600, callback: function () use ($prompt, $systemPrompt) {
             $request = Prism::text()
                 ->using(Provider::Ollama, 'llama3.2:1b')
-                ->withPrompt($prompt);
+                ->withPrompt($prompt)
+                ->withClientRetry(
+                    times: 3,
+                    sleepMilliseconds: 1000,
+                );
 
             if ($systemPrompt) {
                 $request = $request->withSystemPrompt($systemPrompt);
