@@ -21,10 +21,10 @@ class PromptService
             PromptVersion::where('key', $key)->update(['is_active' => false]);
 
             return PromptVersion::create([
-                'key'         => $key,
-                'content'     => $content,
-                'version'     => $latestVersion + 1,
-                'is_active'   => true,
+                'key' => $key,
+                'content' => $content,
+                'version' => $latestVersion + 1,
+                'is_active' => true,
                 'description' => $description,
             ]);
         });

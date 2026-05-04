@@ -39,7 +39,7 @@ class EmbeddingService
     private function generateEmbedding(string $text): array
     {
         return Prism::embeddings()
-            ->using(Provider::Ollama, 'nomic-embed-text')
+            ->using(Provider::from(config('ai.providers.default')), config('ai.models.embeddings'))
             ->fromInput($text)
             ->asEmbeddings()
             ->embeddings[0]->embedding;

@@ -24,6 +24,16 @@ class CarAssistantAgent extends Agent
         );
     }
 
+    public function model()
+    {
+        return config('ai.models.agent', 'llama3.1:8b');
+    }
+
+    public function getProviderName(): string
+    {
+        return config('ai.providers.default', 'ollama');
+    }
+
     public function prompt($message)
     {
         return $message;

@@ -6,13 +6,6 @@ use Illuminate\Support\Facades\Cache;
 
 class RateLimitingService
 {
-    private array $limits = [
-        'text_generation' => ['max' => 50, 'ttl' => 3600],
-        'embedding' => ['max' => 100, 'ttl' => 3600],
-        'chat' => ['max' => 30, 'ttl' => 3600],
-        'analysis' => ['max' => 20, 'ttl' => 86400],
-    ];
-
     public function check(string $feature, string $userId): bool
     {
         $current = Cache::get($this->key($feature, $userId), 0);
@@ -39,6 +32,6 @@ class RateLimitingService
 
     private function getLimit(string $feature): array
     {
-        return $this->limits[$feature] ?? ['max' => 10, 'ttl' => 3600];
+        return config("ai.rate_limits.{$feature}", ['max' => 10, 'ttl' => 3600]);
     }
 }

@@ -24,9 +24,9 @@ class TextGenerationService
 
         $cacheKey = 'ai_response:' . md5($systemPrompt . $prompt);
 
-        $text = Cache::remember($cacheKey, ttl: 3600, callback: function () use ($prompt, $systemPrompt) {
+        $text = Cache::remember($cacheKey, ttl: config('ai.cache_ttl', 3600), callback: function () use ($prompt, $systemPrompt) {
             $request = Prism::text()
-                ->using(Provider::Ollama, 'llama3.2:1b')
+                ->using(Provider::from(config('ai.providers.default')), config('ai.models.text'))
                 ->withPrompt($prompt)
                 ->withClientRetry(
                     times: 3,
@@ -41,8 +41,8 @@ class TextGenerationService
 
             $this->usageTracker->track(
                 feature: 'text_generation',
-                provider: 'ollama',
-                model: 'llama3.2:1b',
+                provider: config('ai.providers.default'),
+                model: config('ai.models.text'),
                 promptTokens: $response->usage->promptTokens,
                 completionTokens: $response->usage->completionTokens,
             );

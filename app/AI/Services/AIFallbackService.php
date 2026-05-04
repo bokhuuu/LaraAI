@@ -8,16 +8,21 @@ use Prism\Prism\Enums\Provider;
 
 class AIFallbackService
 {
-    private array $providers = [
-        ['provider' => Provider::OpenRouter, 'model' => 'openrouter/free'],
-        ['provider' => Provider::Ollama, 'model' => 'llama3.2:1b'],
-    ];
+    private function getProviders(): array
+    {
+        return collect(config('ai.fallback'))
+            ->map(fn($p) => [
+                'provider' => Provider::from($p['provider']),
+                'model'    => $p['model'],
+            ])
+            ->toArray();
+    }
 
     public function generateText(string $prompt, string $systemPrompt = ''): string
     {
         $lastException = null;
 
-        foreach ($this->providers as $config) {
+        foreach ($this->getProviders() as $config) {
             try {
                 $request = Prism::text()
                     ->using($config['provider'], $config['model'])

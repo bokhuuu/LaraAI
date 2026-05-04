@@ -11,7 +11,7 @@ class StructuredOutputService
     public function extract(string $content, ObjectSchema $schema): array
     {
         $response = Prism::structured()
-            ->using(Provider::Ollama, 'llama3.2:1b')
+            ->using(Provider::from(config('ai.providers.default')), config('ai.models.text'))
             ->withSchema($schema)
             ->withPrompt($content)
             ->asStructured();
