@@ -33,6 +33,14 @@ class HealthCheckController extends Controller
         }
 
         try {
+            \Artisan::call('horizon:status');
+            $output = trim(\Artisan::output());
+            $services['queue'] = str_contains(strtolower($output), 'running') ? 'ok' : 'warning: ' . $output;
+        } catch (\Throwable $e) {
+            $services['queue'] = 'warning: ' . $e->getMessage();
+        }
+
+        try {
             Prism::text()
                 ->using(Provider::from(config('ai.providers.default')), config('ai.models.text'))
                 ->withPrompt('ping')
