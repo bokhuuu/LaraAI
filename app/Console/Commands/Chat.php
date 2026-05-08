@@ -66,7 +66,7 @@ class Chat extends Command
             })->values()->all();
 
             $response = Prism::text()
-                ->using(Provider::Ollama, 'llama3.2:1b')
+                ->using(Provider::from(config('ai.providers.default')), config('ai.models.text'))
                 ->withMessages($prismMessages)
                 ->asText();
 

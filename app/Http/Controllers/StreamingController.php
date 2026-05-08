@@ -13,7 +13,7 @@ class StreamingController extends Controller
     {
         return response()->stream(function () {
             $stream = Prism::text()
-                ->using(Provider::OpenRouter, 'openrouter/free')
+                ->using(Provider::from(config('ai.providers.default')), config('ai.models.text'))
                 ->withSystemPrompt('You are a car dealership assistant.')
                 ->withPrompt('Describe the BMW X5 in detail.')
                 ->asStream();

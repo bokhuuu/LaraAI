@@ -10,9 +10,9 @@ use App\AI\Services\PromptService;
 class CarAssistantAgent extends Agent
 {
     protected $name = 'CarAssistantAgent';
-    protected $model = 'openrouter/free';
+    protected $model = 'llama3.1:8b';
     protected $history = 'database';
-    protected $provider = 'openrouter';
+    protected $provider = 'ollama';
     protected $tools = [];
     protected $mcpServers = ['mcp_server_memory'];
 
