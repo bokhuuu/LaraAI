@@ -8,6 +8,19 @@ use App\AI\Services\UsageTrackingService;
 use App\AI\Services\RateLimitingService;
 use Illuminate\Support\Facades\Cache;
 
+/**
+ * TextGenerationService
+ *
+ * Handles basic AI text generation with:
+ * - Response caching (Cache::remember with md5 hash key)
+ * - Rate limiting per user per feature
+ * - Token usage tracking
+ * - Automatic retry on failure (withClientRetry)
+ *
+ * TEMPLATE USAGE: Inject this service anywhere you need
+ * simple AI text generation. Extend generate() method
+ * to add domain-specific logic.
+ */
 class TextGenerationService
 {
 
@@ -16,6 +29,14 @@ class TextGenerationService
         private RateLimitingService $rateLimiter
     ) {}
 
+    /**
+     * Generate AI text response with caching, rate limiting and usage tracking.
+     *
+     * @param string $prompt - User message or question
+     * @param string $systemPrompt - Developer instructions (optional)
+     * @param string $userId - For rate limiting - use auth user ID in production
+     * @throws \RuntimeException - When rate limit exceeded
+     */
     public function generate(string $prompt, string $systemPrompt = '', string $userId = 'default'): string
     {
         if (!$this->rateLimiter->check('text_generation', $userId)) {

@@ -2,44 +2,37 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Conversation;
-use App\Models\Message;
+use App\AI\Services\ConversationService;
 use Illuminate\Console\Command;
-use Prism\Prism\Facades\Prism;
-use Prism\Prism\Enums\Provider;
-use Prism\Prism\ValueObjects\Messages\UserMessage;
-use Prism\Prism\ValueObjects\Messages\AssistantMessage;
-use Prism\Prism\ValueObjects\Messages\SystemMessage;
 
+/**
+ * Chat Command
+ *
+ * Interactive terminal chatbot demonstrating stateful AI conversation.
+ * Uses ConversationService for message history management.
+ *
+ * Usage: php artisan ai:chat
+ * Type 'exit' to end the conversation.
+ *
+ * TEMPLATE USAGE: Replace system prompt with your domain context.
+ */
 class Chat extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'ai:chat';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Have a conversation with AI';
 
-    /**
-     * Execute the console command.
-     */
-    public function handle()
+    public function __construct(private ConversationService $conversationService)
     {
-        $conversation = Conversation::create();
-        $this->info('Conversation started. Type "exit" to quit.');
+        parent::__construct();
+    }
 
-        Message::create([
-            'conversation_id' => $conversation->id,
-            'role' => 'system',
-            'content' => 'You are a helpful car dealership assistant.',
-        ]);
+    public function handle(): void
+    {
+        $conversation = $this->conversationService->startConversation(
+            'You are a helpful car dealership assistant.'
+        );
+
+        $this->info('Conversation started. Type "exit" to quit.');
 
         while (true) {
             $userInput = $this->ask('You');
@@ -49,34 +42,9 @@ class Chat extends Command
                 break;
             }
 
-            Message::create([
-                'conversation_id' => $conversation->id,
-                'role' => 'user',
-                'content' => $userInput,
-            ]);
+            $reply = $this->conversationService->chat($conversation, $userInput);
 
-            $messages = $conversation->messages()->orderBy('created_at')->get();
-
-            $prismMessages = $messages->map(function ($message) {
-                return match ($message->role) {
-                    'user' => new UserMessage($message->content),
-                    'assistant' => new AssistantMessage($message->content),
-                    'system' => new SystemMessage($message->content),
-                };
-            })->values()->all();
-
-            $response = Prism::text()
-                ->using(Provider::from(config('ai.providers.default')), config('ai.models.text'))
-                ->withMessages($prismMessages)
-                ->asText();
-
-            Message::create([
-                'conversation_id' => $conversation->id,
-                'role' => 'assistant',
-                'content' => $response->text,
-            ]);
-
-            $this->info('AI: ' . $response->text);
+            $this->info('AI: ' . $reply);
         }
     }
 }
