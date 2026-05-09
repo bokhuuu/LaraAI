@@ -6,11 +6,26 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Prism\Prism\Facades\Prism;
-use Prism\Prism\Enums\Provider;
 
+/**
+ * HealthCheckController
+ *
+ * Checks connectivity of all critical services.
+ * Returns JSON with status of: database, redis, queue, ai provider.
+ *
+ * Endpoint: GET /api/ai/health
+ * Healthy response: HTTP 200
+ * Unhealthy response: HTTP 503
+ *
+ * TEMPLATE USAGE: Add additional service checks as needed.
+ * Used by monitoring tools and load balancers.
+ */
 class HealthCheckController extends Controller
 {
+    /**
+     * Run all service health checks and return status report.
+     * Queue check is a warning only - does not affect overall health status.
+     */
     public function check(): JsonResponse
     {
         $services = [];
@@ -41,11 +56,12 @@ class HealthCheckController extends Controller
         }
 
         try {
-            Prism::text()
-                ->using(Provider::from(config('ai.providers.default')), config('ai.models.text'))
-                ->withPrompt('ping')
-                ->asText();
-            $services['ai'] = 'ok';
+            $aiUrl = config('ai.providers.default') === 'ollama'
+                ? 'http://localhost:11434'
+                : 'https://openrouter.ai/api/v1/models';
+
+            $response = \Illuminate\Support\Facades\Http::timeout(3)->get($aiUrl);
+            $services['ai'] = $response->successful() ? 'ok' : 'failed: unreachable';
         } catch (\Throwable $e) {
             $services['ai'] = 'failed: ' . $e->getMessage();
             $healthy = false;

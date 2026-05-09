@@ -2,12 +2,13 @@
 
 use Illuminate\Support\Facades\Route;
 
+// Default Laravel welcome page
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/stream', [App\Http\Controllers\StreamingController::class, 'stream']);
-
+// AI streaming demonstration
+Route::get('/stream', [App\Http\Controllers\AI\StreamingController::class, 'stream']);
 Route::get('/stream-demo', function () {
     return view('ai.stream-demo');
 });
