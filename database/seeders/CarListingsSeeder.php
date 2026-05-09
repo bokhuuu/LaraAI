@@ -5,6 +5,13 @@ namespace Database\Seeders;
 use App\AI\Services\EmbeddingService;
 use Illuminate\Database\Seeder;
 
+/**
+ * CarListingsSeeder
+ *
+ * Seeds example car listings as embedding documents for RAG demonstration.
+ * TEMPLATE USAGE: Replace with your domain content.
+ * Run: php artisan db:seed --class=CarListingsSeeder
+ */
 class CarListingsSeeder extends Seeder
 {
     /**

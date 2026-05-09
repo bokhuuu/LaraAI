@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/** Versioned system prompt stored in database for dynamic prompt management. */
 class PromptVersion extends Model
 {
     protected $fillable = [
@@ -18,6 +19,7 @@ class PromptVersion extends Model
         'is_active' => 'boolean',
     ];
 
+    /** Get active prompt content for key. Returns null if no active version exists. */
     public static function getActive(string $key): ?string
     {
         $prompt = static::where('key', $key)

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/** Stores token usage and cost per AI call. */
 class AiUsageLog extends Model
 {
     protected $fillable = [
