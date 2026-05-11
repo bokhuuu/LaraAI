@@ -1,59 +1,101 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# LaraAI
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A reusable Laravel AI integration template covering every major AI pattern - text generation, structured output, tool calling, RAG, agents, streaming and more. Built to be cloned and adapted for any domain by swapping domain-specific classes while keeping the entire infrastructure intact.
 
-## About Laravel
+> **Example domain:** car dealership. Replace it with real estate, medical, e-commerce - the AI layer stays the same.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Why this exists
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Most Laravel AI tutorials show you how to make a single API call. This project shows you how to build the full layer: services, agents, cost tracking, rate limiting, caching, fallback providers, queues and tests. Production-ready from day one.
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## Tech Stack
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+| Tool | Purpose |
+|------|---------|
+| **Laravel 12** | Application framework |
+| **Prism PHP** | Universal AI provider interface - swap providers without changing code |
+| **LarAgent** | Agent framework built on Prism - tool loops, memory, conversation history |
+| **Ollama** | Local model execution for development (free, private, offline) |
+| **OpenRouter** | Production AI provider - access to GPT-4, Claude, Gemini and more |
+| **Redis** | Cache driver + queue backend |
+| **Laravel Horizon** | Queue monitoring dashboard |
+| **Laravel Telescope** | Development debugging dashboard |
+| **Pest** | Testing framework |
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Features
 
-### Premium Partners
+### AI Patterns
+- ✅ Text generation with prompt/response flow
+- ✅ Structured output - force JSON schema, decode to typed PHP array
+- ✅ Tool calling - AI decides which PHP function to call and when
+- ✅ Stateful conversations - database-backed history on top of stateless LLMs
+- ✅ Embeddings + semantic search - cosine similarity over stored vectors
+- ✅ RAG (Retrieval-Augmented Generation) - AI answers from your own data
+- ✅ LarAgent - full agent loop with tools, memory and MCP support
+- ✅ Streaming - SSE responses from AI to browser in real time
+- ✅ Multi-modal - image input via OpenRouter + Gemini
+- ✅ Prompt versioning - store, activate and roll back system prompts from DB
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### Production Infrastructure
+- ✅ Cost tracking - log token usage and estimated cost per AI call
+- ✅ Rate limiting - per-user, per-feature call limits backed by Redis
+- ✅ Response caching - skip duplicate AI calls with hashed cache keys
+- ✅ Automatic fallback - if primary provider fails, retry with secondary
+- ✅ Async AI jobs - `ShouldQueue` jobs with retry, batching, failure handling
+- ✅ Health check endpoint - verify all AI services are reachable
+- ✅ Config-driven — zero hardcoded values, everything via `config/ai.php` + `.env`
+- ✅ Horizon dashboard — real-time queue monitoring at `/horizon`
+- ✅ Telescope integration — full request/job/query debugging at `/telescope`
 
-## Contributing
+### Code Quality
+- ✅ 26 Pest tests passing - services, jobs, mocked AI responses
+- ✅ Clean service architecture - one responsibility per class
+- ✅ Docblocks on every class and method
+- ✅ Laravel Pint formatting enforced
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Coming Soon
+- ⬜ Chat UI - Blade + Alpine.js streaming demo
+- ⬜ Docker + `docker-compose.yml`
+- ⬜ GitHub Actions CI/CD
+- ⬜ Postman collection
+- ⬜ Deployment guide
 
-## Code of Conduct
+---
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Architecture
 
-## Security Vulnerabilities
+```
+app/AI/
+├── Services/
+│   ├── TextGenerationService       # Basic AI calls, caching, rate limiting
+│   ├── EmbeddingService            # Generate vectors, store, semantic search
+│   ├── ConversationService         # DB-backed stateful conversations
+│   ├── StructuredOutputService     # Extract typed data via JSON schema
+│   ├── ToolService                 # Prism tool calling without agent loop
+│   ├── PromptService               # Versioned system prompts from DB
+│   ├── UsageTrackingService        # Token usage + cost per call
+│   ├── RateLimitingService         # Per-user per-feature Redis limits
+│   └── AIFallbackService           # Automatic provider retry logic
+├── Agents/
+│   └── CarAssistantAgent           # LarAgent agent — tools, RAG, MCP memory
+└── Tools/
+    └── README.md                   # Guide for adding standalone tool classes
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
+## Provider Strategy
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+| Environment | Provider | Why |
+|-------------|----------|-----|
+| Development | Ollama (local) | Free, private, works offline |
+| Production | OpenRouter | Fast, powerful, access to all major models |
+| Fallback | OpenRouter → Ollama | Automatic retry if primary fails |
+
+Switching providers requires no code changes — only `.env` values.
