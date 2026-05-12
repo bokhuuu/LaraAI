@@ -7,8 +7,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// AI streaming demonstration
+// AI streaming
 Route::get('/stream', [App\Http\Controllers\AI\StreamingController::class, 'stream']);
-Route::get('/stream-demo', function () {
-    return view('ai.stream-demo');
-});
+Route::get('/chat', fn() => view('ai.chat'));

@@ -7,6 +7,8 @@ use Prism\Prism\Enums\Provider;
 use Prism\Prism\Streaming\Events\TextDeltaEvent;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use App\AI\Services\PromptService;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 /**
  * StreamingController
@@ -16,7 +18,7 @@ use App\AI\Services\PromptService;
  *
  * Endpoints:
  * - GET /stream → SSE stream of AI response chunks
- * - GET /stream-demo → Browser demo page
+ * - GET /stream-demo → Chat UI demo page
  *
  * TEMPLATE USAGE: Replace prompt with your domain question.
  * Use EventSource in browser to receive chunks.
@@ -30,13 +32,15 @@ class StreamingController extends Controller
      *
      * TEMPLATE USAGE: Replace systemPrompt and prompt with your domain content.
      */
-    public function stream(): StreamedResponse
+    public function stream(Request $request): StreamedResponse
     {
-        return response()->stream(function () {
+        $prompt = $request->input('message') ?? 'Tell me about our cars.';
+
+        return response()->stream(function () use ($prompt) {
             $stream = Prism::text()
                 ->using(Provider::from(config('ai.providers.default')), config('ai.models.text'))
                 ->withSystemPrompt(app(PromptService::class)->get('car_assistant', 'You are a car dealership assistant.'))
-                ->withPrompt('Describe the BMW X5 in detail.')
+                ->withPrompt($prompt)
                 ->asStream();
 
             foreach ($stream as $chunk) {
