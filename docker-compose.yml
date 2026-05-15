@@ -1,0 +1,64 @@
+services:
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: LaraAI
+    restart: unless-stopped
+    working_dir: /var/www
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+      - redis
+    volumes:
+      - .:/var/www
+    networks:
+      - laraai
+
+  mysql:
+    image: mysql:8.0
+    container_name: LaraAI-mysql
+    restart: unless-stopped
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - laraai
+
+  redis:
+    image: redis:7-alpine
+    container_name: LaraAI-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - laraai
+
+  ollama:
+    image: ollama/ollama
+    container_name: LaraAI-ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    entrypoint: ["/bin/sh", "-c", "ollama serve & sleep 5 && ollama pull llama3.2:1b && ollama pull llama3.1:8b && ollama pull nomic-embed-text && wait"]  
+    networks:
+      - laraai
+
+networks:
+  laraai:
+    driver: bridge
+
+volumes:
+  mysql-data:
+  redis-data:
+  ollama-data:

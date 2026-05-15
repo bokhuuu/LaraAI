@@ -14,23 +14,25 @@ Most Laravel AI tutorials show you how to make a single API call. This project s
 
 ## Tech Stack
 
-| Tool | Purpose |
-|------|---------|
-| **Laravel 12** | Application framework |
-| **Prism PHP** | Universal AI provider interface - swap providers without changing code |
-| **LarAgent** | Agent framework built on Prism - tool loops, memory, conversation history |
-| **Ollama** | Local model execution for development (free, private, offline) |
-| **OpenRouter** | Production AI provider - access to GPT-4, Claude, Gemini and more |
-| **Redis** | Cache driver + queue backend |
-| **Laravel Horizon** | Queue monitoring dashboard |
-| **Laravel Telescope** | Development debugging dashboard |
-| **Pest** | Testing framework |
+| Tool                  | Purpose                                                                   |
+| --------------------- | ------------------------------------------------------------------------- |
+| **Laravel 12**        | Application framework                                                     |
+| **Prism PHP**         | Universal AI provider interface - swap providers without changing code    |
+| **LarAgent**          | Agent framework built on Prism - tool loops, memory, conversation history |
+| **Ollama**            | Local model execution for development (free, private, offline)            |
+| **OpenRouter**        | Production AI provider - access to GPT-4, Claude, Gemini and more         |
+| **Redis**             | Cache driver + queue backend                                              |
+| **Laravel Horizon**   | Queue monitoring dashboard                                                |
+| **Laravel Telescope** | Development debugging dashboard                                           |
+| **Pest**              | Testing framework                                                         |
+| **Docker**            | Containerized development environment - one command setup                 |
 
 ---
 
 ## Features
 
 ### AI Patterns
+
 - ✅ Text generation with prompt/response flow
 - ✅ Structured output - force JSON schema, decode to typed PHP array
 - ✅ Tool calling - AI decides which PHP function to call and when
@@ -43,6 +45,7 @@ Most Laravel AI tutorials show you how to make a single API call. This project s
 - ✅ Prompt versioning - store, activate and roll back system prompts from DB
 
 ### Production Infrastructure
+
 - ✅ Cost tracking - log token usage and estimated cost per AI call
 - ✅ Rate limiting - per-user, per-feature call limits backed by Redis
 - ✅ Response caching - skip duplicate AI calls with hashed cache keys
@@ -54,14 +57,14 @@ Most Laravel AI tutorials show you how to make a single API call. This project s
 - ✅ Telescope integration — full request/job/query debugging at `/telescope`
 
 ### Code Quality
+
 - ✅ 26 Pest tests passing - services, jobs, mocked AI responses
 - ✅ Clean service architecture - one responsibility per class
 - ✅ Docblocks on every class and method
 - ✅ Laravel Pint formatting enforced
 
 ### Coming Soon
-- ⬜ Chat UI - Blade + Alpine.js streaming demo
-- ⬜ Docker + `docker-compose.yml`
+
 - ⬜ GitHub Actions CI/CD
 - ⬜ Postman collection
 - ⬜ Deployment guide
