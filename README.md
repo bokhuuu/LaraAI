@@ -52,9 +52,11 @@ Most Laravel AI tutorials show you how to make a single API call. This project s
 - ✅ Automatic fallback - if primary provider fails, retry with secondary
 - ✅ Async AI jobs - `ShouldQueue` jobs with retry, batching, failure handling
 - ✅ Health check endpoint - verify all AI services are reachable
-- ✅ Config-driven — zero hardcoded values, everything via `config/ai.php` + `.env`
-- ✅ Horizon dashboard — real-time queue monitoring at `/horizon`
-- ✅ Telescope integration — full request/job/query debugging at `/telescope`
+- ✅ Config-driven - zero hardcoded values, everything via `config/ai.php` + `.env`
+- ✅ Horizon dashboard - real-time queue monitoring at `/horizon`
+- ✅ Telescope integration - full request/job/query debugging at `/telescope`
+- ✅ Docker - one command setup with MySQL, Redis, Ollama containers
+- ✅ GitHub Actions CI - tests run automatically on every push and pull request
 
 ### Code Quality
 
@@ -65,6 +67,5 @@ Most Laravel AI tutorials show you how to make a single API call. This project s
 
 ### Coming Soon
 
-- ⬜ GitHub Actions CI/CD
 - ⬜ Postman collection
 - ⬜ Deployment guide
