@@ -1,0 +1,127 @@
+{
+    "info": {
+        "_postman_id": "c3c4f52b-15cb-4ab6-875c-3544dcb48268",
+        "name": "LaraAI API",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "_exporter_id": "40814814",
+        "_collection_link": "https://csc666-1687.postman.co/workspace/LaraAI~39ac6fc7-4b2f-4ff9-b4de-375c89fba913/collection/40814814-c3c4f52b-15cb-4ab6-875c-3544dcb48268?action=share&source=collection_link&creator=40814814"
+    },
+    "item": [
+        {
+            "name": "Health Check",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/api/ai/health",
+                    "host": ["{{base_url}}"],
+                    "path": ["api", "ai", "health"]
+                },
+                "description": "Check connectivity of all AI services including database, Redis, queue and Ollama.  \nReturns 200 if all services healthy, 503 if any critical service is down."
+            },
+            "response": []
+        },
+        {
+            "name": "Healthy Response",
+            "request": {
+                "auth": {
+                    "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/api/ai/health",
+                    "host": ["{{base_url}}"],
+                    "path": ["api", "ai", "health"]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Streaming AI Response",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/stream",
+                    "host": ["{{base_url}}"],
+                    "path": ["stream"]
+                },
+                "description": "SSE streaming endpoint. Returns AI generated text as a real-time stream using Server-Sent Events.  \nOpen in browser at /stream for live demo."
+            },
+            "response": []
+        },
+        {
+            "name": "Stream Response",
+            "request": {
+                "auth": {
+                    "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/stream",
+                    "host": ["{{base_url}}"],
+                    "path": ["stream"]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Chat UI",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/chat",
+                    "host": ["{{base_url}}"],
+                    "path": ["chat"]
+                },
+                "description": "Browser-based chat interface with streaming AI responses via Alpine.js and SSE"
+            },
+            "response": []
+        },
+        {
+            "name": "Chat UI Response",
+            "request": {
+                "auth": {
+                    "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/chat",
+                    "host": ["{{base_url}}"],
+                    "path": ["chat"]
+                }
+            },
+            "response": []
+        }
+    ],
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {},
+                "exec": [""]
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {},
+                "exec": [""]
+            }
+        }
+    ],
+    "variable": [
+        {
+            "key": "base_url",
+            "value": ""
+        }
+    ]
+}

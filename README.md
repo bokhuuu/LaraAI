@@ -57,6 +57,7 @@ Most Laravel AI tutorials show you how to make a single API call. This project s
 - ✅ Telescope integration - full request/job/query debugging at `/telescope`
 - ✅ Docker - one command setup with MySQL, Redis, Ollama containers
 - ✅ GitHub Actions CI - tests run automatically on every push and pull request
+- ✅ Postman collection - import `postman_collection.json` to test all endpoints
 
 ### Code Quality
 
@@ -67,5 +68,4 @@ Most Laravel AI tutorials show you how to make a single API call. This project s
 
 ### Coming Soon
 
-- ⬜ Postman collection
 - ⬜ Deployment guide

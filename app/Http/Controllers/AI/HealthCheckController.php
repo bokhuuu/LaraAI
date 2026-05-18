@@ -57,7 +57,7 @@ class HealthCheckController extends Controller
 
         try {
             $aiUrl = config('ai.providers.default') === 'ollama'
-                ? 'http://localhost:11434'
+                ? config('prism.providers.ollama.url')
                 : 'https://openrouter.ai/api/v1/models';
 
             $response = \Illuminate\Support\Facades\Http::timeout(3)->get($aiUrl);
