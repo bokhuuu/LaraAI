@@ -8,7 +8,24 @@ A reusable Laravel AI integration template covering every major AI pattern - tex
 
 ## Why this exists
 
-Most Laravel AI tutorials show you how to make a single API call. This project shows you how to build the full layer: services, agents, cost tracking, rate limiting, caching, fallback providers, queues and tests. Production-ready from day one.
+This project shows you how to build the full layer: services, agents, cost tracking, rate limiting, caching, fallback providers, queues and tests. Production-ready from day one.
+
+---
+
+## Quick Start
+
+```bash
+git clone https://github.com/bokhuuubokhuuu/laravel-ai-core
+cd laravel-ai-core
+cp .env.example .env
+docker compose up -d
+docker exec LaraAI php artisan key:generate
+docker exec LaraAI php artisan migrate
+```
+
+Open `http://localhost:8080` - done.
+
+> **Requires:** Docker. Nothing else.
 
 ---
 
@@ -26,6 +43,29 @@ Most Laravel AI tutorials show you how to make a single API call. This project s
 | **Laravel Telescope** | Development debugging dashboard                                           |
 | **Pest**              | Testing framework                                                         |
 | **Docker**            | Containerized development environment - one command setup                 |
+
+---
+
+## Architecture
+
+app/AI/
+Services/
+TextGenerationService - text generation with caching + rate limiting
+EmbeddingService - generate vectors, store, semantic search
+ConversationService - stateful conversation management
+StructuredOutputService - extract structured data from text
+ToolService - Prism tool calling without LarAgent
+PromptService - versioned system prompts in DB
+UsageTrackingService - token usage + cost per AI call
+RateLimitingService - per-user per-feature call limits
+AIFallbackService - automatic provider fallback with retry
+Agents/
+CarAssistantAgent - LarAgent agent with tools, RAG, MCP
+
+**Provider strategy:**
+Development → Ollama (local, free, private)
+Production → OpenRouter (paid, fast, powerful)
+Fallback → OpenRouter → Ollama (automatic)
 
 ---
 
@@ -66,6 +106,34 @@ Most Laravel AI tutorials show you how to make a single API call. This project s
 - ✅ Docblocks on every class and method
 - ✅ Laravel Pint formatting enforced
 
-### Coming Soon
+---
 
-- ⬜ Deployment guide
+## API Endpoints
+
+| Method | Endpoint         | Description                      |
+| ------ | ---------------- | -------------------------------- |
+| GET    | `/api/ai/health` | Health check for all AI services |
+| GET    | `/stream`        | SSE streaming AI response        |
+| GET    | `/chat`          | Browser chat interface           |
+| GET    | `/horizon`       | Queue monitoring dashboard       |
+| GET    | `/telescope`     | Development debugging dashboard  |
+
+Import `postman_collection.json` into Postman to test all endpoints immediately.
+
+---
+
+## Adapting to a New Domain
+
+To use this template for a new domain (e.g. real estate):
+
+| Component           | What to Change                                   |
+| ------------------- | ------------------------------------------------ |
+| `CarAssistantAgent` | Rename to `PropertyAssistantAgent`, update tools |
+| `searchByBrand()`   | Replace with `searchByDistrict()`                |
+| `AnalyzeCarJob`     | Rename to `AnalyzePropertyJob`, update schema    |
+| `prompt_versions`   | Create new prompts for your domain               |
+| `config/ai.php`     | Update models/providers as needed                |
+
+Everything else - services, infrastructure, config - stays identical.
+
+---
