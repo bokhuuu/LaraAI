@@ -73,38 +73,39 @@ Fallback → OpenRouter → Ollama (automatic)
 
 ### AI Patterns
 
-- ✅ Text generation with prompt/response flow
-- ✅ Structured output - force JSON schema, decode to typed PHP array
-- ✅ Tool calling - AI decides which PHP function to call and when
-- ✅ Stateful conversations - database-backed history on top of stateless LLMs
-- ✅ Embeddings + semantic search - cosine similarity over stored vectors
-- ✅ RAG (Retrieval-Augmented Generation) - AI answers from your own data
-- ✅ LarAgent - full agent loop with tools, memory and MCP support
-- ✅ Streaming - SSE responses from AI to browser in real time
-- ✅ Multi-modal - image input via OpenRouter + Gemini
-- ✅ Prompt versioning - store, activate and roll back system prompts from DB
+- Text generation with prompt/response flow
+- Structured output - force JSON schema, decode to typed PHP array
+- Tool calling - AI decides which PHP function to call and when
+- Stateful conversations - database-backed history on top of stateless LLMs
+- Embeddings + semantic search - cosine similarity over stored vectors
+- RAG (Retrieval-Augmented Generation) - AI answers from your own data
+- LarAgent - full agent loop with tools, memory and MCP support
+- Streaming - SSE responses from AI to browser in real time
+- Multi-modal - image input via OpenRouter + Gemini
+- Prompt versioning - store, activate and roll back system prompts from DB
 
 ### Production Infrastructure
 
-- ✅ Cost tracking - log token usage and estimated cost per AI call
-- ✅ Rate limiting - per-user, per-feature call limits backed by Redis
-- ✅ Response caching - skip duplicate AI calls with hashed cache keys
-- ✅ Automatic fallback - if primary provider fails, retry with secondary
-- ✅ Async AI jobs - `ShouldQueue` jobs with retry, batching, failure handling
-- ✅ Health check endpoint - verify all AI services are reachable
-- ✅ Config-driven - zero hardcoded values, everything via `config/ai.php` + `.env`
-- ✅ Horizon dashboard - real-time queue monitoring at `/horizon`
-- ✅ Telescope integration - full request/job/query debugging at `/telescope`
-- ✅ Docker - one command setup with MySQL, Redis, Ollama containers
-- ✅ GitHub Actions CI - tests run automatically on every push and pull request
-- ✅ Postman collection - import `postman_collection.json` to test all endpoints
+- Cost tracking - log token usage and estimated cost per AI call
+- Rate limiting - per-user, per-feature call limits backed by Redis
+- Response caching - skip duplicate AI calls with hashed cache keys
+- Automatic fallback - if primary provider fails, retry with secondary
+- Async AI jobs - `ShouldQueue` jobs with retry, batching, failure handling
+- Health check endpoint - verify all AI services are reachable
+- Config-driven - zero hardcoded values, everything via `config/ai.php` + `.env`
+- Horizon dashboard - real-time queue monitoring at `/horizon`
+- Telescope integration - full request/job/query debugging at `/telescope`
+- Docker - one command setup with MySQL, Redis, Ollama containers
+- GitHub Actions CI - tests run automatically on every push and pull request
+- Postman collection - import `postman_collection.json` to test all endpoints
+- Event-driven side effects - decoupled listeners for tracking, alerts, analytics
 
 ### Code Quality
 
-- ✅ 26 Pest tests passing - services, jobs, mocked AI responses
-- ✅ Clean service architecture - one responsibility per class
-- ✅ Docblocks on every class and method
-- ✅ Laravel Pint formatting enforced
+- 26 Pest tests passing - services, jobs, mocked AI responses
+- Clean service architecture - one responsibility per class
+- Docblocks on every class and method
+- Laravel Pint formatting enforced
 
 ---
 

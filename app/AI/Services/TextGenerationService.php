@@ -4,8 +4,8 @@ namespace App\AI\Services;
 
 use Prism\Prism\Facades\Prism;
 use Prism\Prism\Enums\Provider;
-use App\AI\Services\UsageTrackingService;
 use App\AI\Services\RateLimitingService;
+use App\Events\AiCallCompleted;
 use Illuminate\Support\Facades\Cache;
 
 /**
@@ -25,7 +25,6 @@ class TextGenerationService
 {
 
     public function __construct(
-        private UsageTrackingService $usageTracker,
         private RateLimitingService $rateLimiter
     ) {}
 
@@ -60,7 +59,7 @@ class TextGenerationService
 
             $response = $request->asText();
 
-            $this->usageTracker->track(
+            AiCallCompleted::dispatch(
                 feature: 'text_generation',
                 provider: config('ai.providers.default'),
                 model: config('ai.models.text'),
