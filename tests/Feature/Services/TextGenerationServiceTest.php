@@ -2,7 +2,6 @@
 
 use App\AI\Services\TextGenerationService;
 use App\AI\Services\RateLimitingService;
-use App\AI\Services\UsageTrackingService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Prism\Prism\Facades\Prism;
@@ -14,7 +13,6 @@ uses(RefreshDatabase::class);
 beforeEach(function () {
     Cache::flush();
     $this->service = new TextGenerationService(
-        new UsageTrackingService(),
         new RateLimitingService()
     );
 });
