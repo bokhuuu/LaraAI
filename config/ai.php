@@ -77,4 +77,5 @@ return [
         'chat' => ['max' => 30,  'ttl' => 3600],
         'analysis' => ['max' => 20,  'ttl' => 86400],
     ],
+    'cost_alert_threshold' => env('AI_COST_ALERT_THRESHOLD', 0.01),
 ];

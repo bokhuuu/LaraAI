@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Events\AiCallCompleted;
+use App\Listeners\CostAlertListener;
 use App\Listeners\UsageTrackingListener;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
@@ -25,6 +26,11 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(
             AiCallCompleted::class,
             UsageTrackingListener::class,
+        );
+
+        Event::listen(
+            AiCallCompleted::class,
+            CostAlertListener::class,
         );
     }
 }

@@ -98,7 +98,7 @@ Fallback → OpenRouter → Ollama (automatic)
 - Docker - one command setup with MySQL, Redis, Ollama containers
 - GitHub Actions CI - tests run automatically on every push and pull request
 - Postman collection - import `postman_collection.json` to test all endpoints
-- Event-driven side effects - decoupled listeners for tracking, alerts, analytics
+- Event-driven side effects - decoupled listeners for usage tracking and Slack cost alerts
 
 ### Code Quality
 
