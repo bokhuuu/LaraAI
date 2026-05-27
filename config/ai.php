@@ -78,4 +78,20 @@ return [
         'analysis' => ['max' => 20,  'ttl' => 86400],
     ],
     'cost_alert_threshold' => env('AI_COST_ALERT_THRESHOLD', 0.01),
+    /*
+    |--------------------------------------------------------------------------
+    | Model Cost Rates (per token, USD)
+    |--------------------------------------------------------------------------
+    | Used by UsageTrackingService to calculate cost per AI call.
+    | Input/output rates per token in USD.
+    | Free/local models use 0. Add new models here as needed.
+    */
+    'costs' => [
+        'openrouter/free'              => ['input' => 0,          'output' => 0],
+        'ollama/llama3.2:1b'           => ['input' => 0,          'output' => 0],
+        'ollama/llama3.1:8b'           => ['input' => 0,          'output' => 0],
+        'gpt-4o'                       => ['input' => 0.000005,   'output' => 0.000015],
+        'gpt-4o-mini'                  => ['input' => 0.00000015, 'output' => 0.0000006],
+        'anthropic/claude-sonnet-4-6'  => ['input' => 0.000003,   'output' => 0.000015],
+    ],
 ];

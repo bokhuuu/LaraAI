@@ -10,21 +10,10 @@ use App\Models\AiUsageLog;
  * Tracks token usage and cost per AI call.
  * Stores data in ai_usage_logs table.
  *
- * Cost rates per model defined in $costs array.
- * TEMPLATE USAGE: Call track() after every AI response.
- * Add new model rates to $costs array as needed.
+ * Cost rates per model defined in config/ai.php under 'costs' key.
  */
 class UsageTrackingService
 {
-    private array $costs = [
-        'openrouter/free' => ['input' => 0, 'output' => 0],
-        'ollama/llama3.2:1b' => ['input' => 0, 'output' => 0],
-        'ollama/llama3.1:8b' => ['input' => 0, 'output' => 0],
-        'gpt-4o' => ['input' => 0.000005, 'output' => 0.000015],
-        'gpt-4o-mini' => ['input' => 0.00000015, 'output' => 0.0000006],
-        'anthropic/claude-sonnet-4-6' => ['input' => 0.000003, 'output' => 0.000015],
-    ];
-
     /**
      * Track token usage and cost for an AI call.
      * Creates a log entry in ai_usage_logs table.
@@ -50,12 +39,12 @@ class UsageTrackingService
     }
 
     /**
-     * Calculate cost based on model rates.
+     * Calculate cost based on model rates from config/ai.php costs section.
      * Unknown models default to zero cost.
      */
     public function calculateCost(string $model, int $promptTokens, int $completionTokens): float
     {
-        $rates = $this->costs[$model] ?? ['input' => 0, 'output' => 0];
+        $rates = config('ai.costs.' . $model, ['input' => 0, 'output' => 0]);
 
         return ($promptTokens * $rates['input']) + ($completionTokens * $rates['output']);
     }
