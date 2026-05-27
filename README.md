@@ -12,23 +12,6 @@ This project shows you how to build the full layer: services, agents, cost track
 
 ---
 
-## Quick Start
-
-```bash
-git clone https://github.com/bokhuuubokhuuu/laravel-ai-core
-cd laravel-ai-core
-cp .env.example .env
-docker compose up -d
-docker exec LaraAI php artisan key:generate
-docker exec LaraAI php artisan migrate
-```
-
-Open `http://localhost:8080` - done.
-
-> **Requires:** Docker. Nothing else.
-
----
-
 ## Tech Stack
 
 | Tool                  | Purpose                                                                   |
@@ -48,21 +31,22 @@ Open `http://localhost:8080` - done.
 
 ## Architecture
 
-- app/AI/
-- Services/
-- TextGenerationService - text generation with caching + rate limiting
-- EmbeddingService - generate vectors, store, semantic search
-- ConversationService - stateful conversation management
-- StructuredOutputService - extract structured data from text
-- ToolService - Prism tool calling without LarAgent
-- PromptService - versioned system prompts in DB
-- UsageTrackingService - token usage + cost per AI call
-- RateLimitingService - per-user per-feature call limits
-- AIFallbackService - automatic provider fallback with retry
-- Agents/
-  CarAssistantAgent - LarAgent agent with tools, RAG, MCP
+app/AI/
+├── Services/
+│ ├── TextGenerationService # Text generation with caching + rate limiting
+│ ├── EmbeddingService # Generate vectors, store, semantic search
+│ ├── ConversationService # Stateful conversation management
+│ ├── StructuredOutputService # Extract structured data from text
+│ ├── ToolService # Prism tool calling without LarAgent
+│ ├── PromptService # Versioned system prompts in DB
+│ ├── UsageTrackingService # Token usage + cost per AI call
+│ ├── RateLimitingService # Per-user per-feature call limits
+│ └── AIFallbackService # Automatic provider fallback with retry
+└── Agents/
+└── CarAssistantAgent # LarAgent agent with tools, RAG, MCP
 
 **Provider strategy:**
+
 Development → Ollama (local, free, private)
 Production → OpenRouter (paid, fast, powerful)
 Fallback → OpenRouter → Ollama (automatic)
@@ -139,3 +123,12 @@ To use this template for a new domain (e.g. real estate):
 Everything else - services, infrastructure, config - stays identical.
 
 ---
+
+## Roadmap
+
+- Events/Listeners - decoupled side effects with Laravel event system
+- DB Indexes + N+1 prevention - query optimization for production scale
+- Security hardening - OWASP top 10, input sanitization, rate abuse prevention
+- Sentry integration - error tracking and performance monitoring
+- Demo seeder - 50+ realistic car listings for meaningful RAG and semantic search demo
+- Demo GIF - end-to-end chat UI showing real AI answers in the README
