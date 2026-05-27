@@ -48,19 +48,19 @@ Open `http://localhost:8080` - done.
 
 ## Architecture
 
-app/AI/
-Services/
-TextGenerationService - text generation with caching + rate limiting
-EmbeddingService - generate vectors, store, semantic search
-ConversationService - stateful conversation management
-StructuredOutputService - extract structured data from text
-ToolService - Prism tool calling without LarAgent
-PromptService - versioned system prompts in DB
-UsageTrackingService - token usage + cost per AI call
-RateLimitingService - per-user per-feature call limits
-AIFallbackService - automatic provider fallback with retry
-Agents/
-CarAssistantAgent - LarAgent agent with tools, RAG, MCP
+- app/AI/
+- Services/
+- TextGenerationService - text generation with caching + rate limiting
+- EmbeddingService - generate vectors, store, semantic search
+- ConversationService - stateful conversation management
+- StructuredOutputService - extract structured data from text
+- ToolService - Prism tool calling without LarAgent
+- PromptService - versioned system prompts in DB
+- UsageTrackingService - token usage + cost per AI call
+- RateLimitingService - per-user per-feature call limits
+- AIFallbackService - automatic provider fallback with retry
+- Agents/
+  CarAssistantAgent - LarAgent agent with tools, RAG, MCP
 
 **Provider strategy:**
 Development → Ollama (local, free, private)
@@ -99,10 +99,11 @@ Fallback → OpenRouter → Ollama (automatic)
 - GitHub Actions CI - tests run automatically on every push and pull request
 - Postman collection - import `postman_collection.json` to test all endpoints
 - Event-driven side effects - decoupled listeners for usage tracking and Slack cost alerts
+- Model observers - automatic Redis cost aggregation on every AI log entry
 
 ### Code Quality
 
-- 26 Pest tests passing - services, jobs, mocked AI responses
+- 28 Pest tests passing - services, jobs, mocked AI responses
 - Clean service architecture - one responsibility per class
 - Docblocks on every class and method
 - Laravel Pint formatting enforced
