@@ -43,6 +43,12 @@ class CarAssistantAgent extends Agent
     /** External tool classes - leave empty when using #[Tool] attribute methods */
     protected $tools = [];
 
+    public function __construct(string $sessionId)
+    {
+        $this->provider = config('ai.providers.default', 'ollama');
+        parent::__construct($sessionId);
+    }
+
     /**
      * MCP servers for external tool access.
      * 'mcp_server_memory' = cross-session knowledge graph.
@@ -66,12 +72,6 @@ class CarAssistantAgent extends Agent
     public function model()
     {
         return config('ai.models.agent', 'llama3.1:8b');
-    }
-
-    /** Returns provider from config. Overrides $provider property. Set AI_DEFAULT_PROVIDER in .env */
-    public function getProviderName(): string
-    {
-        return config('ai.providers.default', 'ollama');
     }
 
     /** Pre-processes user message. Override to inject context or formatting. */

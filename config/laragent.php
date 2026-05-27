@@ -125,6 +125,7 @@ return [
         'ollama' => [
             'label' => 'ollama',
             'driver' => \LarAgent\Drivers\OpenAi\OllamaDriver::class,
+            'api_url' => env('OLLAMA_URL', 'http://localhost:11434') . '/v1',
             'default_truncation_threshold' => 131072,
             'default_max_completion_tokens' => 131072,
             'default_temperature' => 0.8,
