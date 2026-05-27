@@ -32,8 +32,6 @@ class CarAssistantAgent extends Agent
     /** Agent identifier used for logging and history storage */
     protected $name = 'CarAssistantAgent';
 
-    /** Fallback model - overridden by model() method. Change AI_AGENT_MODEL in .env */
-    protected $model = 'llama3.1:8b';
 
     /**
      * History storage: 'in_memory' | 'cache' | 'database'
@@ -41,8 +39,6 @@ class CarAssistantAgent extends Agent
      */
     protected $history = 'database';
 
-    /** Fallback provider - overridden by getProviderName(). Change AI_DEFAULT_PROVIDER in .env */
-    protected $provider = 'ollama';
 
     /** External tool classes - leave empty when using #[Tool] attribute methods */
     protected $tools = [];
