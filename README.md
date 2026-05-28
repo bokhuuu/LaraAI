@@ -87,6 +87,7 @@ Fallback → OpenRouter → Ollama (automatic)
 - DB indexes - performance indexes on high-traffic query columns
 - Input validation - prompt size limits and basic injection filtering via FormRequest
 - Security headers - XSS, clickjacking and MIME sniffing protection on every response
+- Sentry integration - production exception tracking with full stack traces and alerts
 
 ### Code Quality
 
@@ -129,6 +130,5 @@ Everything else - services, infrastructure, config - stays identical.
 
 ## Roadmap
 
-- Sentry integration - error tracking and performance monitoring
 - Demo seeder - 50+ realistic car listings for meaningful RAG and semantic search demo
 - Demo GIF - end-to-end chat UI showing real AI answers in the README
