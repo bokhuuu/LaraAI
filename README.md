@@ -84,6 +84,7 @@ Fallback → OpenRouter → Ollama (automatic)
 - Postman collection - import `postman_collection.json` to test all endpoints
 - Event-driven side effects - decoupled listeners for usage tracking and Slack cost alerts
 - Model observers - automatic Redis cost aggregation on every AI log entry
+- DB indexes - performance indexes on high-traffic query columns
 
 ### Code Quality
 
@@ -126,8 +127,6 @@ Everything else - services, infrastructure, config - stays identical.
 
 ## Roadmap
 
-- Events/Listeners - decoupled side effects with Laravel event system
-- DB Indexes + N+1 prevention - query optimization for production scale
 - Security hardening - OWASP top 10, input sanitization, rate abuse prevention
 - Sentry integration - error tracking and performance monitoring
 - Demo seeder - 50+ realistic car listings for meaningful RAG and semantic search demo
