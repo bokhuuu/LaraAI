@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\AI;
 
 use Prism\Prism\Facades\Prism;
@@ -7,8 +9,8 @@ use Prism\Prism\Enums\Provider;
 use Prism\Prism\Streaming\Events\TextDeltaEvent;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use App\AI\Services\PromptService;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AI\StreamPromptRequest;
 
 /**
  * StreamingController
@@ -32,7 +34,7 @@ class StreamingController extends Controller
      *
      * TEMPLATE USAGE: Replace systemPrompt and prompt with your domain content.
      */
-    public function stream(Request $request): StreamedResponse
+    public function stream(StreamPromptRequest $request): StreamedResponse
     {
         $prompt = $request->input('message') ?? 'Tell me about our cars.';
 
