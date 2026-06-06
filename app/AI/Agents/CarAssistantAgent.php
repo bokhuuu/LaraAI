@@ -127,7 +127,7 @@ class CarAssistantAgent extends Agent
     #[Tool('Search car listings by description or requirements')]
     public function searchListings(string $query): string
     {
-        $service = new EmbeddingService();
+        $service = app(EmbeddingService::class);
         $results = $service->search($query, 3);
 
         $listings = $results->map(fn($result) => $result['document']->content)->toArray();

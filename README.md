@@ -88,6 +88,7 @@ Fallback → OpenRouter → Ollama (automatic)
 - Input validation - prompt size limits and basic injection filtering via FormRequest
 - Security headers - XSS, clickjacking and MIME sniffing protection on every response
 - Sentry integration - production exception tracking with full stack traces and alerts
+- Demo seeder - 55 realistic car listings indexed as embeddings, RAG works out of the box
 
 ### Code Quality
 
@@ -138,6 +139,5 @@ Everything else - services, infrastructure, config - stays identical.
 
 ## Roadmap
 
-- Demo seeder - 50+ realistic car listings for meaningful RAG and semantic search demo
 - Demo GIF - end-to-end chat UI showing real AI answers in the README
 - Architecture diagram - visual system diagram showing all layers and connections
