@@ -42,6 +42,7 @@ app/AI/
 │ ├── UsageTrackingService # Token usage + cost per AI call
 │ ├── RateLimitingService # Per-user per-feature call limits
 │ └── AIFallbackService # Automatic provider fallback with retry
+| ├── MultiModalService # Image analysis via vision-capable models (OpenRouter + Gemini)  
 └── Agents/
 └── CarAssistantAgent # LarAgent agent with tools, RAG, MCP
 
@@ -92,7 +93,7 @@ Fallback → OpenRouter → Ollama (automatic)
 
 ### Code Quality
 
-- 28 Pest tests passing - services, jobs, mocked AI responses
+- 30 Pest tests passing - services, jobs, mocked AI responses
 - Clean service architecture - one responsibility per class
 - Docblocks on every class and method
 - Laravel Pint formatting enforced

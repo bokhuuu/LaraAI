@@ -32,6 +32,7 @@ return [
         'tools' => env('AI_TOOLS_MODEL', 'llama3.1:8b'),
         'embeddings' => env('AI_EMBEDDINGS_MODEL', 'nomic-embed-text'),
         'agent' => env('AI_AGENT_MODEL', 'llama3.1:8b'),
+        'vision'     => env('AI_VISION_MODEL', 'google/gemini-flash-1.5'),
     ],
 
     /*
