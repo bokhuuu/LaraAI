@@ -36,6 +36,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Embeddings
+    |--------------------------------------------------------------------------
+    | search_limit: max documents returned by EmbeddingService::search().
+    | Increase for broader RAG context, decrease for tighter relevance.
+    */
+    'embeddings' => [
+        'search_limit' => env('AI_SEARCH_LIMIT', 5),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Providers
     |--------------------------------------------------------------------------
     | default: used for development (ollama = local, free)
@@ -77,7 +88,17 @@ return [
         'chat' => ['max' => 30,  'ttl' => 3600],
         'analysis' => ['max' => 20,  'ttl' => 86400],
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cost Alert Threshold (USD)
+    |--------------------------------------------------------------------------
+    | CostAlertListener sends a Slack alert when a single AI call
+    | exceeds this amount. Increase for production paid models.
+    | TEMPLATE: adjust per your budget requirements.
+    */
     'cost_alert_threshold' => env('AI_COST_ALERT_THRESHOLD', 0.01),
+
     /*
     |--------------------------------------------------------------------------
     | Model Cost Rates (per token, USD)

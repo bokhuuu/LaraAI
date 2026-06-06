@@ -116,19 +116,28 @@ Import `postman_collection.json` into Postman to test all endpoints immediately.
 
 To use this template for a new domain (e.g. real estate):
 
-| Component           | What to Change                                   |
-| ------------------- | ------------------------------------------------ |
-| `CarAssistantAgent` | Rename to `PropertyAssistantAgent`, update tools |
-| `searchByBrand()`   | Replace with `searchByDistrict()`                |
-| `AnalyzeCarJob`     | Rename to `AnalyzePropertyJob`, update schema    |
-| `prompt_versions`   | Create new prompts for your domain               |
-| `config/ai.php`     | Update models/providers as needed                |
+| Component           | What to Change                                                                 |
+| ------------------- | ------------------------------------------------------------------------------ |
+| `CarAssistantAgent` | Delete. Scaffold your own Agent extending LarAgent.                            |
+| `AnalyzeCarJob`     | Delete. Scaffold your own domain job.                                          |
+| `CarListingsSeeder` | Delete. Scaffold your own domain seeder with real data.                        |
+| `prompt_versions`   | Create new prompts for your domain                                             |
+| `config/ai.php`     | Update models, providers, rate limits and add your production model cost rates |
 
 Everything else - services, infrastructure, config - stays identical.
 
 ---
 
+## Known Limitations
+
+- **Ollama model size** - large models (llama3.1:8b) require 8GB+ RAM. Smaller hardware should use `llama3.2:1b` for all features
+- **MCP memory server** - requires Node.js in the runtime environment. Not available in serverless deployments
+- **OpenRouter costs** - production costs vary by model and provider. Monitor via `/horizon` and cost alert threshold in `config/ai.php`
+- **Streaming + conversation history** - the `/chat` endpoint uses stateless streaming. Full conversation history requires `ConversationService` separately
+- **RAG quality** - semantic search quality depends on seeded data volume. Meaningful results require 50+ indexed documents
+
 ## Roadmap
 
 - Demo seeder - 50+ realistic car listings for meaningful RAG and semantic search demo
 - Demo GIF - end-to-end chat UI showing real AI answers in the README
+- Architecture diagram - visual system diagram showing all layers and connections

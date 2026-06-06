@@ -42,8 +42,10 @@ class EmbeddingService
      * Returns collection of ['document' => Document, 'score' => float].
      * Score range: 0.0 (unrelated) to 1.0 (identical meaning).
      */
-    public function search(string $query, int $limit = 5): Collection
+    public function search(string $query, ?int $limit = null): Collection
     {
+        $limit ??= config('ai.embeddings.search_limit', 5);
+
         $queryEmbedding = $this->generateEmbedding($query);
         $documents = Document::all();
 
