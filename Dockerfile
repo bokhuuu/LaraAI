@@ -9,6 +9,8 @@ RUN apt-get update && apt-get install -y \
     git \
     ghostscript \
     libmagickwand-dev \
+    && pecl install imagick || true \
+    && docker-php-ext-enable imagick \
     && rm -rf /var/lib/apt/lists/*
 
 # Node.js (required for MCP memory server via npx)
@@ -21,9 +23,6 @@ RUN docker-php-ext-install pdo pdo_mysql pcntl
 
 # Redis PHP extension
 RUN pecl install redis && docker-php-ext-enable redis
-
-# Imagick PHP extension (required for spatie/pdf-to-image)
-RUN pecl install imagick && docker-php-ext-enable imagick
 
 # Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer

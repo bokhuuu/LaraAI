@@ -1,10 +1,13 @@
 <?php
 
-use App\Jobs\AnalyzeCarJob;
 use App\AI\Services\StructuredOutputService;
+use App\Jobs\AnalyzeCarJob;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Log;
 use Prism\Prism\Facades\Prism;
+use Prism\Prism\Schema\NumberSchema;
+use Prism\Prism\Schema\ObjectSchema;
+use Prism\Prism\Schema\StringSchema;
 use Prism\Prism\Testing\StructuredResponseFake;
 use Prism\Prism\ValueObjects\Usage;
 
@@ -19,11 +22,23 @@ test('handle extracts structured data and creates document', function () {
                 'year' => 1992,
                 'price' => 500000,
             ])
-            ->withUsage(new Usage(10, 20))
+            ->withUsage(new Usage(10, 20)),
     ]);
 
-    $job = new AnalyzeCarJob('Ferrari F40 1992, sports car, price $500000');
-    $job->handle(new StructuredOutputService());
+    $schema = new ObjectSchema(
+        name: 'car',
+        description: 'A car listing',
+        properties: [
+            new StringSchema('brand', 'The car brand'),
+            new StringSchema('model', 'The car model'),
+            new NumberSchema('year', 'The year of the car'),
+            new NumberSchema('price', 'The price in USD'),
+        ],
+        requiredFields: ['brand', 'model', 'year', 'price']
+    );
+
+    $job = new AnalyzeCarJob('Ferrari F40 1992, sports car, price $500000', $schema);
+    $job->handle(new StructuredOutputService);
 
     $this->assertDatabaseHas('documents', [
         'content' => 'Ferrari F40 1992, sports car, price $500000',
@@ -33,12 +48,23 @@ test('handle extracts structured data and creates document', function () {
 test('failed logs error message', function () {
     Log::shouldReceive('error')
         ->once()
-        ->with('AnalyzeCarJob failed', \Mockery::on(
-            fn($data) =>
-            $data['car'] === 'Ferrari F40 1992' &&
+        ->with('AnalyzeCarJob failed', Mockery::on(
+            fn ($data) => $data['content'] === 'Ferrari F40 1992, sports car, price $500000' &&
                 isset($data['error'])
         ));
 
-    $job = new AnalyzeCarJob('Ferrari F40 1992');
-    $job->failed(new \Exception('AI service unavailable'));
+    $schema = new ObjectSchema(
+        name: 'car',
+        description: 'A car listing',
+        properties: [
+            new StringSchema('brand', 'The car brand'),
+            new StringSchema('model', 'The car model'),
+            new NumberSchema('year', 'The year of the car'),
+            new NumberSchema('price', 'The price in USD'),
+        ],
+        requiredFields: ['brand', 'model', 'year', 'price']
+    );
+
+    $job = new AnalyzeCarJob('Ferrari F40 1992, sports car, price $500000', $schema);
+    $job->failed(new Exception('AI service unavailable'));
 });

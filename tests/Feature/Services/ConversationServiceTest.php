@@ -12,7 +12,7 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     Cache::flush();
-    $this->service = new ConversationService(new RateLimitingService());
+    $this->service = new ConversationService(new RateLimitingService);
 });
 
 test('startConversation creates conversation with system message', function () {
@@ -22,8 +22,8 @@ test('startConversation creates conversation with system message', function () {
 
     $this->assertDatabaseHas('messages', [
         'conversation_id' => $conversation->id,
-        'role'            => 'system',
-        'content'         => 'You are a helpful assistant.',
+        'role' => 'system',
+        'content' => 'You are a helpful assistant.',
     ]);
 });
 
@@ -32,15 +32,15 @@ test('chat throws exception when rate limit exceeded', function () {
 
     Cache::put('ai_rate_limit:user_1:chat', 31, 3600);
 
-    expect(fn() => $this->service->chat($conversation, 'Hello', 'user_1'))
-        ->toThrow(\RuntimeException::class, 'Rate limit exceeded for chat');
+    expect(fn () => $this->service->chat($conversation, 'Hello', 'user_1'))
+        ->toThrow(RuntimeException::class, 'Rate limit exceeded for chat');
 });
 
 test('chat saves user and assistant messages to database', function () {
     Prism::fake([
         TextResponseFake::make()
             ->withText('Hello! How can I help?')
-            ->withUsage(new Usage(10, 20))
+            ->withUsage(new Usage(10, 20)),
     ]);
 
     $conversation = $this->service->startConversation('You are helpful.');
@@ -49,13 +49,13 @@ test('chat saves user and assistant messages to database', function () {
 
     $this->assertDatabaseHas('messages', [
         'conversation_id' => $conversation->id,
-        'role'            => 'user',
-        'content'         => 'Hi there',
+        'role' => 'user',
+        'content' => 'Hi there',
     ]);
 
     $this->assertDatabaseHas('messages', [
         'conversation_id' => $conversation->id,
-        'role'            => 'assistant',
-        'content'         => 'Hello! How can I help?',
+        'role' => 'assistant',
+        'content' => 'Hello! How can I help?',
     ]);
 });

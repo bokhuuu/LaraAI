@@ -8,7 +8,7 @@ A reusable Laravel AI integration template covering every major AI pattern - tex
 
 ## Why this exists
 
-This project shows you how to build the full layer: services, agents, cost tracking, rate limiting, caching, fallback providers, queues and tests. Production-ready from day one.
+This project shows you how to build the full AI layer: services, agents, cost tracking, rate limiting, caching, fallback providers, queues and tests. Production-ready.
 
 ---
 
@@ -31,27 +31,32 @@ This project shows you how to build the full layer: services, agents, cost track
 
 ## Architecture
 
+```
 app/AI/
 ├── Services/
-│ ├── TextGenerationService # Text generation with caching + rate limiting
-│ ├── EmbeddingService # Generate vectors, store, semantic search
-│ ├── ConversationService # Stateful conversation management
-│ ├── StructuredOutputService # Extract structured data from text
-│ ├── ToolService # Prism tool calling without LarAgent
-│ ├── PromptService # Versioned system prompts in DB
-│ ├── UsageTrackingService # Token usage + cost per AI call
-│ ├── RateLimitingService # Per-user per-feature call limits
-│ └── AIFallbackService # Automatic provider fallback with retry
-| ├── MultiModalService # Image analysis via vision-capable models (OpenRouter + Gemini)  
-| ├── PdfExtractionService # Extract structured data from PDFs via vision AI page-by-page  
+│   ├── TextGenerationService      # Text generation with caching + rate limiting
+│   ├── EmbeddingService           # Generate vectors, store, semantic search
+│   ├── ConversationService        # Stateful conversation management
+│   ├── StructuredOutputService    # Extract structured data from text
+│   ├── ToolService                # Prism tool calling without LarAgent
+│   ├── PromptService              # Versioned system prompts in DB
+│   ├── UsageTrackingService       # Token usage + cost per AI call
+│   ├── RateLimitingService        # Per-user per-feature call limits
+│   ├── AIFallbackService          # Automatic provider fallback with retry
+│   ├── MultiModalService          # Image analysis via vision-capable models
+│   └── PdfExtractionService       # Extract structured data from PDFs via vision AI
 └── Agents/
-└── CarAssistantAgent # LarAgent agent with tools, RAG, MCP
+    └── CarAssistantAgent          # LarAgent agent with tools, RAG, MCP
+```
 
 **Provider strategy:**
 
+```
 Development → Ollama (local, free, private)
-Production → OpenRouter (paid, fast, powerful)
-Fallback → OpenRouter → Ollama (automatic)
+Production  → OpenRouter (paid, fast, powerful)
+Fallback    → OpenRouter → Ollama (automatic)
+Vision      → OpenRouter always (Ollama has no vision support)
+```
 
 ---
 
@@ -68,6 +73,7 @@ Fallback → OpenRouter → Ollama (automatic)
 - LarAgent - full agent loop with tools, memory and MCP support
 - Streaming - SSE responses from AI to browser in real time
 - Multi-modal - image input via OpenRouter + Gemini
+- PDF extraction - schema-driven structured data extraction from PDFs via vision AI
 - Prompt versioning - store, activate and roll back system prompts from DB
 
 ### Production Infrastructure
@@ -94,10 +100,36 @@ Fallback → OpenRouter → Ollama (automatic)
 
 ### Code Quality
 
-- 34 Pest tests passing - services, jobs, mocked AI responses
+- 34 Pest tests passing - services, jobs, observers, mocked AI responses
 - Clean service architecture - one responsibility per class
 - Docblocks on every class and method
-- Laravel Pint formatting enforced
+- Laravel Pint formatting enforced across all 84 files
+
+---
+
+## Requirements
+
+- Docker + Docker Compose
+- OpenRouter API key (for production models and vision features)
+- 8GB+ RAM recommended (for local Ollama models)
+
+---
+
+## Quick Start
+
+## Quick Start
+
+```bash
+git clone git@github.com:bokhuuu/LaraAI.git
+cd LaraAI
+cp .env.example .env
+docker compose up -d
+docker exec LaraAI php artisan key:generate
+docker exec LaraAI php artisan migrate
+docker exec LaraAI php artisan db:seed
+```
+
+Then open `http://localhost` in your browser.
 
 ---
 
@@ -119,13 +151,15 @@ Import `postman_collection.json` into Postman to test all endpoints immediately.
 
 To use this template for a new domain (e.g. real estate):
 
-| Component           | What to Change                                                                 |
-| ------------------- | ------------------------------------------------------------------------------ |
-| `CarAssistantAgent` | Delete. Scaffold your own Agent extending LarAgent.                            |
-| `AnalyzeCarJob`     | Delete. Scaffold your own domain job.                                          |
-| `CarListingsSeeder` | Delete. Scaffold your own domain seeder with real data.                        |
-| `prompt_versions`   | Create new prompts for your domain                                             |
-| `config/ai.php`     | Update models, providers, rate limits and add your production model cost rates |
+| Component           | What to Change                                                                  |
+| ------------------- | ------------------------------------------------------------------------------- |
+| `CarAssistantAgent` | Delete. Scaffold your own Agent extending LarAgent.                             |
+| `AnalyzeCarJob`     | Delete. Scaffold your own domain job. Pass your schema via the constructor.     |
+| `CarListingsSeeder` | Delete. Scaffold your own domain seeder with real data.                         |
+| `searchByBrand()`   | Replace with your domain search tool.                                           |
+| `getAllCars()`      | Replace with your domain DB query (e.g. `YourModel::all()`).                    |
+| `prompt_versions`   | Create new prompts for your domain.                                             |
+| `config/ai.php`     | Update models, providers, rate limits and add your production model cost rates. |
 
 Everything else - services, infrastructure, config - stays identical.
 
@@ -139,7 +173,12 @@ Everything else - services, infrastructure, config - stays identical.
 - **Streaming + conversation history** - the `/chat` endpoint uses stateless streaming. Full conversation history requires `ConversationService` separately
 - **RAG quality** - semantic search quality depends on seeded data volume. Meaningful results require 50+ indexed documents
 
+---
+
 ## Roadmap
 
-- Demo GIF - end-to-end chat UI showing real AI answers in the README
-- Architecture diagram - visual system diagram showing all layers and connections
+- ⬜ Demo GIF - end-to-end chat UI showing real AI answers in the README
+- ⬜ Architecture diagram - visual system diagram showing all layers and connections
+- ⬜ Webhook support - automatically process incoming PDF files via HTTP webhook
+- ⬜ A/B prompt testing - swap system prompts and track which performs better
+- ⬜ User feedback loop - thumbs up/down on AI responses stored in DB

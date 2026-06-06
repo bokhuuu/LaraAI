@@ -1,11 +1,19 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "name": "bokhuuu/laraai",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "Reusable Laravel AI integration template. Covers text generation, embeddings, RAG, tool calling, agents, streaming, queued jobs and multimodal. Swap the example domain in minutes.",
     "keywords": [
         "laravel",
-        "framework"
+        "ai",
+        "llm",
+        "prism",
+        "laragent",
+        "ollama",
+        "openrouter",
+        "rag",
+        "embeddings",
+        "template"
     ],
     "license": "MIT",
     "require": {

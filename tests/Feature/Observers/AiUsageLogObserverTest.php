@@ -1,8 +1,8 @@
 <?php
 
 use App\Models\AiUsageLog;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 
 uses(RefreshDatabase::class);
 
@@ -21,7 +21,7 @@ test('stores monthly cost in cache when log is created', function () {
         'cost_usd' => 0.0125,
     ]);
 
-    $cached = Cache::get('ai_monthly_cost:' . now()->format('Y-m'));
+    $cached = Cache::get('ai_monthly_cost:'.now()->format('Y-m'));
 
     expect((float) $cached)->toBe(0.0125);
 });
@@ -47,7 +47,7 @@ test('accumulates cost across multiple logs', function () {
         'cost_usd' => 0.0125,
     ]);
 
-    $cached = Cache::get('ai_monthly_cost:' . now()->format('Y-m'));
+    $cached = Cache::get('ai_monthly_cost:'.now()->format('Y-m'));
 
     expect((float) $cached)->toBe(0.025);
 });

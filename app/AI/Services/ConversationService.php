@@ -4,12 +4,11 @@ namespace App\AI\Services;
 
 use App\Models\Conversation;
 use App\Models\Message;
-use Prism\Prism\Facades\Prism;
 use Prism\Prism\Enums\Provider;
-use Prism\Prism\ValueObjects\Messages\UserMessage;
+use Prism\Prism\Facades\Prism;
 use Prism\Prism\ValueObjects\Messages\AssistantMessage;
 use Prism\Prism\ValueObjects\Messages\SystemMessage;
-use App\AI\Services\RateLimitingService;
+use Prism\Prism\ValueObjects\Messages\UserMessage;
 
 /**
  * ConversationService
@@ -61,7 +60,7 @@ class ConversationService
         return $conversation->messages()
             ->orderBy('created_at')
             ->get()
-            ->map(fn(Message $message) => match ($message->role) {
+            ->map(fn (Message $message) => match ($message->role) {
                 'user' => new UserMessage($message->content),
                 'assistant' => new AssistantMessage($message->content),
                 'system' => new SystemMessage($message->content),
@@ -78,7 +77,7 @@ class ConversationService
      */
     public function chat(Conversation $conversation, string $userMessage, string $userId = 'default'): string
     {
-        if (!$this->rateLimiter->check('chat', $userId)) {
+        if (! $this->rateLimiter->check('chat', $userId)) {
             throw new \RuntimeException('Rate limit exceeded for chat');
         }
 

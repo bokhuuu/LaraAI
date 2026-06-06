@@ -27,7 +27,7 @@ class PdfExtractionService
      */
     public function extract(string $pdfPath, array $schema): array
     {
-        if (!file_exists($pdfPath)) {
+        if (! file_exists($pdfPath)) {
             throw new \RuntimeException("PDF file not found: {$pdfPath}");
         }
 
@@ -41,7 +41,7 @@ class PdfExtractionService
             try {
                 $pageData = $this->extractFromImage($imagePath, $schema);
 
-                if (!empty($pageData)) {
+                if (! empty($pageData)) {
                     $results = array_merge($results, $pageData);
                 }
             } finally {
@@ -58,7 +58,7 @@ class PdfExtractionService
      */
     private function convertPageToImage(Pdf $pdf, int $page): string
     {
-        $imagePath = sys_get_temp_dir() . '/pdf_page_' . $page . '_' . uniqid() . '.jpg';
+        $imagePath = sys_get_temp_dir().'/pdf_page_'.$page.'_'.uniqid().'.jpg';
 
         $pdf->selectPage($page)->save($imagePath);
 
@@ -86,10 +86,10 @@ class PdfExtractionService
     {
         $fields = implode(', ', $schema);
 
-        return "Extract the following fields from this image as a JSON array of objects. "
-            . "Each object should contain: {$fields}. "
-            . "Return only valid JSON array, no explanation, no markdown, no code blocks. "
-            . "If the page contains no relevant data, return an empty array [].";
+        return 'Extract the following fields from this image as a JSON array of objects. '
+            ."Each object should contain: {$fields}. "
+            .'Return only valid JSON array, no explanation, no markdown, no code blocks. '
+            .'If the page contains no relevant data, return an empty array [].';
     }
 
     /**
@@ -106,7 +106,7 @@ class PdfExtractionService
 
         $decoded = json_decode($response, true);
 
-        if (!is_array($decoded)) {
+        if (! is_array($decoded)) {
             return [];
         }
 

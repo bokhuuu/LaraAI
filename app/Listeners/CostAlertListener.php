@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Listeners;
 
-use App\Events\AiCallCompleted;
 use App\AI\Services\UsageTrackingService;
+use App\Events\AiCallCompleted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -44,16 +44,17 @@ class CostAlertListener implements ShouldQueue
     {
         $webhookUrl = config('services.slack.alerts_webhook_url');
 
-        if (!$webhookUrl) {
+        if (! $webhookUrl) {
             Log::warning('Slack webhook URL not configured');
+
             return;
         }
 
         Http::post($webhookUrl, [
-            'text' => "🚨 *AI Cost Alert*\n" .
-                "Feature: `{$event->feature}`\n" .
-                "Model: `{$event->model}`\n" .
-                "Cost: `\${$cost}`\n" .
+            'text' => "🚨 *AI Cost Alert*\n".
+                "Feature: `{$event->feature}`\n".
+                "Model: `{$event->model}`\n".
+                "Cost: `\${$cost}`\n".
                 "Tokens: `{$event->promptTokens}` prompt / `{$event->completionTokens}` completion",
         ]);
     }

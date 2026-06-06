@@ -11,16 +11,16 @@ use Prism\Prism\ValueObjects\EmbeddingsUsage;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->service = new EmbeddingService();
+    $this->service = new EmbeddingService;
 });
 
 test('generateAndStore creates document in database', function () {
     Prism::fake([
         EmbeddingsResponseFake::make()
             ->withEmbeddings([
-                new Embedding(embedding: [0.1, 0.2, 0.3])
+                new Embedding(embedding: [0.1, 0.2, 0.3]),
             ])
-            ->withUsage(new EmbeddingsUsage(10))
+            ->withUsage(new EmbeddingsUsage(10)),
     ]);
 
     $document = $this->service->generateAndStore('BMW X5 luxury SUV');

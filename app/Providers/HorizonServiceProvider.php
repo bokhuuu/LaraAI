@@ -15,9 +15,8 @@ class HorizonServiceProvider extends HorizonApplicationServiceProvider
     {
         parent::boot();
 
-        // Horizon::routeSmsNotificationsTo('15556667777');
-        Horizon::routeMailNotificationsTo('zura.coding@gmail.com');
-        // Horizon::routeSlackNotificationsTo('slack-webhook-url', '#channel');
+        Horizon::routeMailNotificationsTo(env('HORIZON_ALERT_EMAIL'));
+        Horizon::routeSlackNotificationsTo(env('SLACK_ALERTS_WEBHOOK_URL'));
     }
 
     /**
@@ -29,7 +28,7 @@ class HorizonServiceProvider extends HorizonApplicationServiceProvider
     {
         Gate::define('viewHorizon', function ($user = null) {
             return in_array(optional($user)->email, [
-                'zura.coding@gmail.com'
+                env('HORIZON_ALERT_EMAIL'),
             ]);
         });
     }

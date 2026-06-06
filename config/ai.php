@@ -1,10 +1,8 @@
 <?php
 
 /**
- * AI Configuration
- *
  * Central configuration for all AI-related settings.
- * Override values in .env file — no code changes needed.
+ * Override values in .env file - no code changes needed.
  *
  * Providers: ollama (local dev), openrouter (production)
  * Models: configure per use case for cost/performance balance
@@ -32,7 +30,7 @@ return [
         'tools' => env('AI_TOOLS_MODEL', 'llama3.1:8b'),
         'embeddings' => env('AI_EMBEDDINGS_MODEL', 'nomic-embed-text'),
         'agent' => env('AI_AGENT_MODEL', 'llama3.1:8b'),
-        'vision'     => env('AI_VISION_MODEL', 'google/gemini-flash-1.5'),
+        'vision' => env('AI_VISION_MODEL', 'google/gemini-flash-1.5'),
     ],
 
     /*
@@ -109,11 +107,32 @@ return [
     | Free/local models use 0. Add new models here as needed.
     */
     'costs' => [
-        'openrouter/free'              => ['input' => 0,          'output' => 0],
-        'ollama/llama3.2:1b'           => ['input' => 0,          'output' => 0],
-        'ollama/llama3.1:8b'           => ['input' => 0,          'output' => 0],
-        'gpt-4o'                       => ['input' => 0.000005,   'output' => 0.000015],
-        'gpt-4o-mini'                  => ['input' => 0.00000015, 'output' => 0.0000006],
-        'anthropic/claude-sonnet-4-6'  => ['input' => 0.000003,   'output' => 0.000015],
+        'openrouter/free' => ['input' => 0,          'output' => 0],
+        'ollama/llama3.2:1b' => ['input' => 0,          'output' => 0],
+        'ollama/llama3.1:8b' => ['input' => 0,          'output' => 0],
+        'gpt-4o' => ['input' => 0.000005,   'output' => 0.000015],
+        'gpt-4o-mini' => ['input' => 0.00000015, 'output' => 0.0000006],
+        'anthropic/claude-sonnet-4-6' => ['input' => 0.000003,   'output' => 0.000015],
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Retry Configuration
+    |--------------------------------------------------------------------------
+    | How many times to retry a failed AI call and how long to wait between
+    | attempts (milliseconds). Applied across all services uniformly.
+    */
+    'retry' => [
+        'times' => env('AI_RETRY_TIMES', 3),
+        'sleep_ms' => env('AI_RETRY_SLEEP_MS', 1000),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Default System Prompt
+    |--------------------------------------------------------------------------
+    | Fallback system prompt used when no versioned prompt exists in the DB.
+    | Keep generic - domain-specific prompts belong in prompt_versions table.
+    */
+    'default_system_prompt' => env('AI_DEFAULT_SYSTEM_PROMPT', 'You are a helpful assistant.'),
 ];

@@ -22,10 +22,10 @@ class CarListingsSeeder extends Seeder
 
         foreach ($this->listings() as $listing) {
             $service->generateAndStore($listing);
-            $this->command->info('Indexed: ' . substr($listing, 0, 60) . '...');
+            $this->command->info('Indexed: '.substr($listing, 0, 60).'...');
         }
 
-        $this->command->info('Done. ' . count($this->listings()) . ' listings indexed.');
+        $this->command->info('Done. '.count($this->listings()).' listings indexed.');
     }
 
     /**

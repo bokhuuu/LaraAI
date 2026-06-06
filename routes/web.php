@@ -1,12 +1,13 @@
 <?php
 
+use App\Http\Controllers\AI\StreamingController;
 use Illuminate\Support\Facades\Route;
 
-// Default Laravel welcome page
+// Landing page - replace with your domain homepage or remove
 Route::get('/', function () {
     return view('welcome');
 });
 
-// AI streaming
-Route::get('/stream', [App\Http\Controllers\AI\StreamingController::class, 'stream']);
-Route::get('/chat', fn() => view('ai.chat'));
+// AI endpoints
+Route::get('/stream', [StreamingController::class, 'stream'])->name('ai.stream');
+Route::get('/chat', fn() => view('ai.chat'))->name('ai.chat');

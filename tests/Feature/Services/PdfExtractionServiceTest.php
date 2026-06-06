@@ -69,4 +69,4 @@ test('extract skips empty pages gracefully', function () {
 
 test('extract throws exception for missing pdf file', function () {
     $this->service->extract('/nonexistent/path/file.pdf', ['name', 'price']);
-})->throws(\RuntimeException::class, 'PDF file not found');
+})->throws(RuntimeException::class, 'PDF file not found');

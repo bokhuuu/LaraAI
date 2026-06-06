@@ -20,6 +20,7 @@ class RateLimitingService
     public function check(string $feature, string $userId): bool
     {
         $current = Cache::get($this->key($feature, $userId), 0);
+
         return $current < $this->getLimit($feature)['max'];
     }
 
@@ -29,7 +30,7 @@ class RateLimitingService
         $key = $this->key($feature, $userId);
         $ttl = $this->getLimit($feature)['ttl'];
 
-        if (!Cache::has($key)) {
+        if (! Cache::has($key)) {
             Cache::put($key, 1, $ttl);
         } else {
             Cache::increment($key);
@@ -40,6 +41,7 @@ class RateLimitingService
     public function remaining(string $feature, string $userId): int
     {
         $current = Cache::get($this->key($feature, $userId), 0);
+
         return max(0, $this->getLimit($feature)['max'] - $current);
     }
 

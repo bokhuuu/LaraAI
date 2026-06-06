@@ -2,8 +2,8 @@
 
 namespace App\AI\Services;
 
-use Prism\Prism\Facades\Prism;
 use Prism\Prism\Enums\Provider;
+use Prism\Prism\Facades\Prism;
 use Prism\Prism\ValueObjects\Media\Image;
 
 /**
@@ -24,7 +24,7 @@ class MultiModalService
      */
     public function analyze(string $imagePath, string $prompt): string
     {
-        if (!file_exists($imagePath)) {
+        if (! file_exists($imagePath)) {
             throw new \RuntimeException("Image file not found: {$imagePath}");
         }
 
@@ -34,7 +34,7 @@ class MultiModalService
                 config('ai.models.vision')
             )
             ->withPrompt($prompt, [
-                Image::fromLocalPath($imagePath)
+                Image::fromLocalPath($imagePath),
             ])
             ->asText();
 

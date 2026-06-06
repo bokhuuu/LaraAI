@@ -2,8 +2,9 @@
 
 namespace App\AI\Services;
 
-use Prism\Prism\Facades\Prism;
+use App\Events\AiCallCompleted;
 use Prism\Prism\Enums\Provider;
+use Prism\Prism\Facades\Prism;
 use Prism\Prism\Schema\ObjectSchema;
 
 /**
@@ -21,7 +22,7 @@ class StructuredOutputService
     /**
      * Extract structured data from text matching the provided schema.
      *
-     * @param string $content - Raw text to extract data from
+     * @param  string  $content  - Raw text to extract data from
      * @param ObjectSchema - $schema Defines the shape of expected output
      * @return array - PHP array matching schema structure
      */
@@ -32,6 +33,14 @@ class StructuredOutputService
             ->withSchema($schema)
             ->withPrompt($content)
             ->asStructured();
+
+        AiCallCompleted::dispatch(
+            feature: 'structured_output',
+            provider: config('ai.providers.default'),
+            model: config('ai.models.text'),
+            promptTokens: $response->usage->promptTokens,
+            completionTokens: $response->usage->completionTokens,
+        );
 
         return $response->structured;
     }

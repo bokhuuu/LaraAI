@@ -4,8 +4,8 @@ namespace App\AI\Services;
 
 use App\Models\Document;
 use Illuminate\Support\Collection;
-use Prism\Prism\Facades\Prism;
 use Prism\Prism\Enums\Provider;
+use Prism\Prism\Facades\Prism;
 
 /**
  * EmbeddingService
@@ -77,6 +77,10 @@ class EmbeddingService
      */
     private function cosineSimilarity(array $a, array $b): float
     {
+        if (count($a) !== count($b) || count($a) === 0) {
+            return 0.0;
+        }
+
         $dot = 0;
         $normA = 0;
         $normB = 0;
@@ -87,6 +91,12 @@ class EmbeddingService
             $normB += $b[$i] * $b[$i];
         }
 
-        return $dot / (sqrt($normA) * sqrt($normB));
+        $denominator = sqrt($normA) * sqrt($normB);
+
+        if ($denominator === 0.0) {
+            return 0.0;
+        }
+
+        return $dot / $denominator;
     }
 }

@@ -2,11 +2,10 @@
 
 namespace App\AI\Services;
 
-use Prism\Prism\Facades\Prism;
-use Prism\Prism\Enums\Provider;
-use App\AI\Services\RateLimitingService;
 use App\Events\AiCallCompleted;
 use Illuminate\Support\Facades\Cache;
+use Prism\Prism\Enums\Provider;
+use Prism\Prism\Facades\Prism;
 
 /**
  * TextGenerationService
@@ -23,7 +22,6 @@ use Illuminate\Support\Facades\Cache;
  */
 class TextGenerationService
 {
-
     public function __construct(
         private RateLimitingService $rateLimiter
     ) {}
@@ -31,26 +29,27 @@ class TextGenerationService
     /**
      * Generate AI text response with caching, rate limiting and usage tracking.
      *
-     * @param string $prompt - User message or question
-     * @param string $systemPrompt - Developer instructions (optional)
-     * @param string $userId - For rate limiting - use auth user ID in production
+     * @param  string  $prompt  - User message or question
+     * @param  string  $systemPrompt  - Developer instructions (optional)
+     * @param  string  $userId  - For rate limiting - use auth user ID in production
+     *
      * @throws \RuntimeException - When rate limit exceeded
      */
     public function generate(string $prompt, string $systemPrompt = '', string $userId = 'default'): string
     {
-        if (!$this->rateLimiter->check('text_generation', $userId)) {
+        if (! $this->rateLimiter->check('text_generation', $userId)) {
             throw new \RuntimeException('Rate limit exceeded for text generation');
         }
 
-        $cacheKey = 'ai_response:' . md5($systemPrompt . $prompt);
+        $cacheKey = 'ai_response:'.md5($systemPrompt.$prompt);
 
         $text = Cache::remember($cacheKey, ttl: config('ai.cache_ttl', 3600), callback: function () use ($prompt, $systemPrompt) {
             $request = Prism::text()
                 ->using(Provider::from(config('ai.providers.default')), config('ai.models.text'))
                 ->withPrompt($prompt)
                 ->withClientRetry(
-                    times: 3,
-                    sleepMilliseconds: 1000,
+                    times: config('ai.retry.times', 3),
+                    sleepMilliseconds: config('ai.retry.sleep_ms', 1000)
                 );
 
             if ($systemPrompt) {

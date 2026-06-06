@@ -19,6 +19,7 @@ use Illuminate\Console\Command;
 class Chat extends Command
 {
     protected $signature = 'ai:chat';
+
     protected $description = 'Have a conversation with AI';
 
     public function __construct(private ConversationService $conversationService)
@@ -44,7 +45,7 @@ class Chat extends Command
 
             $reply = $this->conversationService->chat($conversation, $userInput);
 
-            $this->info('AI: ' . $reply);
+            $this->info('AI: '.$reply);
         }
     }
 }

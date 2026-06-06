@@ -3,8 +3,8 @@
 namespace App\AI\Services;
 
 use Illuminate\Support\Facades\Log;
-use Prism\Prism\Facades\Prism;
 use Prism\Prism\Enums\Provider;
+use Prism\Prism\Facades\Prism;
 
 /**
  * AIFallbackService
@@ -23,9 +23,9 @@ class AIFallbackService
     private function getProviders(): array
     {
         return collect(config('ai.fallback'))
-            ->map(fn($p) => [
+            ->map(fn ($p) => [
                 'provider' => Provider::from($p['provider']),
-                'model'    => $p['model'],
+                'model' => $p['model'],
             ])
             ->toArray();
     }
@@ -44,7 +44,10 @@ class AIFallbackService
             try {
                 $request = Prism::text()
                     ->using($config['provider'], $config['model'])
-                    ->withClientRetry(times: 2, sleepMilliseconds: 500)
+                    ->withClientRetry(
+                        times: config('ai.retry.times', 3),
+                        sleepMilliseconds: config('ai.retry.sleep_ms', 1000)
+                    )
                     ->withPrompt($prompt);
 
                 if ($systemPrompt) {
@@ -71,7 +74,7 @@ class AIFallbackService
         }
 
         throw new \RuntimeException(
-            'All AI providers failed: ' . $lastException?->getMessage()
+            'All AI providers failed: '.$lastException?->getMessage()
         );
     }
 }

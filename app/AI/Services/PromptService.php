@@ -58,7 +58,7 @@ class PromptService
             ->where('is_active', true)
             ->first();
 
-        if (!$current || $current->version <= 1) {
+        if (! $current || $current->version <= 1) {
             return null;
         }
 

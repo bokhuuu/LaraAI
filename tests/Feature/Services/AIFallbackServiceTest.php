@@ -9,14 +9,14 @@ use Prism\Prism\ValueObjects\Usage;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->service = new AIFallbackService();
+    $this->service = new AIFallbackService;
 });
 
 test('generateText returns response from available provider', function () {
     Prism::fake([
         TextResponseFake::make()
             ->withText('Fallback response text')
-            ->withUsage(new Usage(10, 20))
+            ->withUsage(new Usage(10, 20)),
     ]);
 
     $result = $this->service->generateText('Test prompt');

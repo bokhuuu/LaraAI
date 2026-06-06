@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\AI;
 
-use Prism\Prism\Facades\Prism;
-use Prism\Prism\Enums\Provider;
-use Prism\Prism\Streaming\Events\TextDeltaEvent;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 use App\AI\Services\PromptService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AI\StreamPromptRequest;
+use Prism\Prism\Enums\Provider;
+use Prism\Prism\Facades\Prism;
+use Prism\Prism\Streaming\Events\TextDeltaEvent;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * StreamingController
@@ -41,13 +41,13 @@ class StreamingController extends Controller
         return response()->stream(function () use ($prompt) {
             $stream = Prism::text()
                 ->using(Provider::from(config('ai.providers.default')), config('ai.models.text'))
-                ->withSystemPrompt(app(PromptService::class)->get('car_assistant', 'You are a car dealership assistant.'))
+                ->withSystemPrompt(app(PromptService::class)->get('car_assistant', config('ai.default_system_prompt')))
                 ->withPrompt($prompt)
                 ->asStream();
 
             foreach ($stream as $chunk) {
                 if ($chunk instanceof TextDeltaEvent) {
-                    echo "data: " . json_encode(['text' => $chunk->delta]) . "\n\n";
+                    echo 'data: '.json_encode(['text' => $chunk->delta])."\n\n";
                     if (ob_get_level() > 0) {
                         ob_flush();
                     }

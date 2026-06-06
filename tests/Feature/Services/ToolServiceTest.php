@@ -10,15 +10,15 @@ use Prism\Prism\ValueObjects\Usage;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->service = new ToolService();
+    $this->service = new ToolService;
 });
 
 test('registerTool adds tool and returns self for chaining', function () {
-    $tool = (new Tool())
+    $tool = (new Tool)
         ->as('test_tool')
         ->for('A test tool')
         ->withStringParameter('input', 'Test input')
-        ->using(fn(string $input): string => 'result');
+        ->using(fn (string $input): string => 'result');
 
     $result = $this->service->registerTool($tool);
 
@@ -29,7 +29,7 @@ test('run returns AI text response', function () {
     Prism::fake([
         TextResponseFake::make()
             ->withText('Tool response result')
-            ->withUsage(new Usage(10, 20))
+            ->withUsage(new Usage(10, 20)),
     ]);
 
     $result = $this->service->run('Test prompt');

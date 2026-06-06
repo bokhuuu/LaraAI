@@ -3,9 +3,9 @@
 namespace App\AI\Agents;
 
 use App\AI\Services\EmbeddingService;
+use App\AI\Services\PromptService;
 use LarAgent\Agent;
 use LarAgent\Attributes\Tool;
-use App\AI\Services\PromptService;
 
 /**
  * CarAssistantAgent - Example Domain AI Agent
@@ -32,13 +32,11 @@ class CarAssistantAgent extends Agent
     /** Agent identifier used for logging and history storage */
     protected $name = 'CarAssistantAgent';
 
-
     /**
      * History storage: 'in_memory' | 'cache' | 'database'
      * Use 'database' for production (persists across sessions)
      */
     protected $history = 'database';
-
 
     /** External tool classes - leave empty when using #[Tool] attribute methods */
     protected $tools = [];
@@ -96,7 +94,7 @@ class CarAssistantAgent extends Agent
 
         $results = array_filter(
             $cars,
-            fn($car) => strtolower($car['brand']) === strtolower($brand)
+            fn ($car) => strtolower($car['brand']) === strtolower($brand)
         );
 
         return json_encode(array_values($results));
@@ -130,7 +128,7 @@ class CarAssistantAgent extends Agent
         $service = app(EmbeddingService::class);
         $results = $service->search($query, 3);
 
-        $listings = $results->map(fn($result) => $result['document']->content)->toArray();
+        $listings = $results->map(fn ($result) => $result['document']->content)->toArray();
 
         return json_encode($listings);
     }

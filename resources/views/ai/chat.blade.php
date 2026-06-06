@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Car Assistant</title>
+    <title>AI Assistant</title>
 
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
@@ -80,7 +80,7 @@
 
 <body>
 
-    <h2>🚗 Car Assistant</h2>
+    <h2>AI Assistant</h2>
 
     <div x-data="chat()">
 
@@ -100,7 +100,7 @@
 
         <div class="input-row">
 
-            <input type="text" x-model="input" @keydown.enter="sendMessage()" placeholder="Ask about a car...">
+            <input type="text" x-model="input" @keydown.enter="sendMessage()" placeholder="Ask a question...">
 
             <button @click="sendMessage()" :disabled="streaming">Send</button>
 

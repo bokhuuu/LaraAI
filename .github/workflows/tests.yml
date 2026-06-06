@@ -27,11 +27,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4.2.2
 
+      - name: Install system dependencies
+        run: sudo apt-get install -y ghostscript libmagickwand-dev
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: "8.4"
-          extensions: pdo, pdo_mysql, redis, pcntl
+          extensions: pdo, pdo_mysql, redis, pcntl, imagick
 
       - name: Install dependencies
         run: composer install --no-interaction --optimize-autoloader

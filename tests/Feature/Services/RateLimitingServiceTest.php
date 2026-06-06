@@ -1,15 +1,14 @@
 <?php
 
 use App\AI\Services\RateLimitingService;
-
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
     Cache::flush();
-    $this->service = new RateLimitingService();
+    $this->service = new RateLimitingService;
 });
 
 test('check returns true when under limit', function () {

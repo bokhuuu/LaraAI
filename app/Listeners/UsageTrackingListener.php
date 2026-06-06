@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Listeners;
 
-use App\Events\AiCallCompleted;
 use App\AI\Services\UsageTrackingService;
+use App\Events\AiCallCompleted;
 
 /**
  * Listens for AiCallCompleted events and tracks token usage and cost.

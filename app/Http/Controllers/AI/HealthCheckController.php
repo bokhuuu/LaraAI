@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 /**
  * HealthCheckController
@@ -35,7 +36,7 @@ class HealthCheckController extends Controller
             DB::connection()->getPdo();
             $services['database'] = 'ok';
         } catch (\Throwable $e) {
-            $services['database'] = 'failed: ' . $e->getMessage();
+            $services['database'] = 'failed: '.$e->getMessage();
             $healthy = false;
         }
 
@@ -43,16 +44,16 @@ class HealthCheckController extends Controller
             Cache::store('redis')->put('health_check', true, 10);
             $services['redis'] = 'ok';
         } catch (\Throwable $e) {
-            $services['redis'] = 'failed: ' . $e->getMessage();
+            $services['redis'] = 'failed: '.$e->getMessage();
             $healthy = false;
         }
 
         try {
             \Artisan::call('horizon:status');
             $output = trim(\Artisan::output());
-            $services['queue'] = str_contains(strtolower($output), 'running') ? 'ok' : 'warning: ' . $output;
+            $services['queue'] = str_contains(strtolower($output), 'running') ? 'ok' : 'warning: '.$output;
         } catch (\Throwable $e) {
-            $services['queue'] = 'warning: ' . $e->getMessage();
+            $services['queue'] = 'warning: '.$e->getMessage();
         }
 
         try {
@@ -60,10 +61,10 @@ class HealthCheckController extends Controller
                 ? config('prism.providers.ollama.url')
                 : 'https://openrouter.ai/api/v1/models';
 
-            $response = \Illuminate\Support\Facades\Http::timeout(3)->get($aiUrl);
+            $response = Http::timeout(3)->get($aiUrl);
             $services['ai'] = $response->successful() ? 'ok' : 'failed: unreachable';
         } catch (\Throwable $e) {
-            $services['ai'] = 'failed: ' . $e->getMessage();
+            $services['ai'] = 'failed: '.$e->getMessage();
             $healthy = false;
         }
 
