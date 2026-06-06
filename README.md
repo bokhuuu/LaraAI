@@ -43,6 +43,7 @@ app/AI/
 │ ├── RateLimitingService # Per-user per-feature call limits
 │ └── AIFallbackService # Automatic provider fallback with retry
 | ├── MultiModalService # Image analysis via vision-capable models (OpenRouter + Gemini)  
+| ├── PdfExtractionService # Extract structured data from PDFs via vision AI page-by-page  
 └── Agents/
 └── CarAssistantAgent # LarAgent agent with tools, RAG, MCP
 
@@ -93,7 +94,7 @@ Fallback → OpenRouter → Ollama (automatic)
 
 ### Code Quality
 
-- 30 Pest tests passing - services, jobs, mocked AI responses
+- 34 Pest tests passing - services, jobs, mocked AI responses
 - Clean service architecture - one responsibility per class
 - Docblocks on every class and method
 - Laravel Pint formatting enforced
