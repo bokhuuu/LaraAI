@@ -144,4 +144,16 @@ return [
     | Keep generic - domain-specific prompts belong in prompt_versions table.
     */
     'default_system_prompt' => env('AI_DEFAULT_SYSTEM_PROMPT', 'You are a helpful assistant.'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Webhook
+    |--------------------------------------------------------------------------
+    | secret: HMAC-SHA256 key for verifying incoming webhook requests.
+    | max_file_size_kb: maximum accepted file size in kilobytes.
+    */
+    'webhook' => [
+        'secret' => env('WEBHOOK_SECRET'),
+        'max_file_size_kb' => env('WEBHOOK_MAX_FILE_SIZE_KB', 10240),
+    ],
 ];

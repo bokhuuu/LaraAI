@@ -1,10 +1,10 @@
 {
     "info": {
-        "_postman_id": "c3c4f52b-15cb-4ab6-875c-3544dcb48268",
+        "_postman_id": "68ce8e41-75a8-451a-8573-f5740ff65c65",
         "name": "LaraAI API",
         "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
         "_exporter_id": "40814814",
-        "_collection_link": "https://csc666-1687.postman.co/workspace/LaraAI~39ac6fc7-4b2f-4ff9-b4de-375c89fba913/collection/40814814-c3c4f52b-15cb-4ab6-875c-3544dcb48268?action=share&source=collection_link&creator=40814814"
+        "_collection_link": "https://csc666-1687.postman.co/workspace/39ac6fc7-4b2f-4ff9-b4de-375c89fba913/collection/40814814-68ce8e41-75a8-451a-8573-f5740ff65c65?action=share&source=collection_link&creator=40814814"
     },
     "item": [
         {
@@ -33,7 +33,7 @@
                     },
                     "status": "OK",
                     "code": 200,
-                    "_postman_previewlanguage": "",
+                    "_postman_previewlanguage": "Text",
                     "header": [
                         {
                             "key": "Server",
@@ -119,7 +119,7 @@
                     },
                     "status": "OK",
                     "code": 200,
-                    "_postman_previewlanguage": "",
+                    "_postman_previewlanguage": "Text",
                     "header": [
                         {
                             "key": "Server",
@@ -209,7 +209,7 @@
                     },
                     "status": "OK",
                     "code": 200,
-                    "_postman_previewlanguage": "",
+                    "_postman_previewlanguage": "Text",
                     "header": [
                         {
                             "key": "Server",
@@ -342,6 +342,126 @@
                     "header": [],
                     "cookie": [],
                     "body": "{\n    \"message\": \"Feedback recorded.\",\n    \"id\": 6\n}"
+                }
+            ]
+        },
+        {
+            "name": "Receive Webhook",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "X-Webhook-Signature",
+                        "value": "sha256=your-signature-here",
+                        "description": "HMAC-SHA256 signature of the request body using WEBHOOK_SECRET"
+                    }
+                ],
+                "body": {
+                    "mode": "formdata",
+                    "formdata": [
+                        {
+                            "key": "file",
+                            "description": "PDF or any file to process",
+                            "type": "file",
+                            "src": []
+                        }
+                    ]
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/webhook",
+                    "host": ["{{base_url}}"],
+                    "path": ["api", "webhook"]
+                },
+                "description": "Receive a file from an external system and queue it for async processing. Request must include a valid HMAC-SHA256 signature in X-Webhook-Signature header."
+            },
+            "response": [
+                {
+                    "name": "Receive Webhook",
+                    "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "X-Webhook-Signature",
+                                "value": "sha256=2516fb127252d506722ed2433d820698d09247b47b62bfd470e7dd0543be4db5",
+                                "description": "HMAC-SHA256 signature of the request body using WEBHOOK_SECRET"
+                            }
+                        ],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "file",
+                                    "description": "PDF or any file to process",
+                                    "type": "file",
+                                    "src": "/home/zura/Pictures/dog.jpg"
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/webhook",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "webhook"]
+                        }
+                    },
+                    "status": "OK",
+                    "code": 200,
+                    "_postman_previewlanguage": "",
+                    "header": [
+                        {
+                            "key": "Server",
+                            "value": "nginx"
+                        },
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        },
+                        {
+                            "key": "Transfer-Encoding",
+                            "value": "chunked"
+                        },
+                        {
+                            "key": "Connection",
+                            "value": "keep-alive"
+                        },
+                        {
+                            "key": "X-Powered-By",
+                            "value": "PHP/8.4.22"
+                        },
+                        {
+                            "key": "Cache-Control",
+                            "value": "no-cache, private"
+                        },
+                        {
+                            "key": "Date",
+                            "value": "Sun, 07 Jun 2026 12:25:58 GMT"
+                        },
+                        {
+                            "key": "X-Content-Type-Options",
+                            "value": "nosniff"
+                        },
+                        {
+                            "key": "X-Frame-Options",
+                            "value": "DENY"
+                        },
+                        {
+                            "key": "X-XSS-Protection",
+                            "value": "1; mode=block"
+                        },
+                        {
+                            "key": "Referrer-Policy",
+                            "value": "strict-origin-when-cross-origin"
+                        },
+                        {
+                            "key": "Permissions-Policy",
+                            "value": "camera=(), microphone=(), geolocation=()"
+                        },
+                        {
+                            "key": "Access-Control-Allow-Origin",
+                            "value": "*"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "{\n    \"message\": \"Webhook received. Processing queued.\"\n}"
                 }
             ]
         }
