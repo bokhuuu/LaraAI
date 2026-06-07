@@ -11,9 +11,11 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 /**
- * Listens for AiCallCompleted events and sends a Slack alert
- * when a single AI call exceeds the cost threshold.
- * Queued - Slack HTTP call runs in background via Horizon.
+ * Sends a Slack alert when a single AI call exceeds the cost threshold.
+ *
+ * Listens for AiCallCompleted events, calculates the call cost and posts
+ * a Slack message if the cost exceeds config('ai.cost_alert_threshold').
+ * Runs in the background queue so it never slows down the main response.
  */
 class CostAlertListener implements ShouldQueue
 {
@@ -25,6 +27,10 @@ class CostAlertListener implements ShouldQueue
 
     private float $costThreshold;
 
+    /**
+     * Calculate the cost of this AI call and alert if it exceeds the threshold.
+     * Silently returns if cost is under threshold - no action needed.
+     */
     public function handle(AiCallCompleted $event): void
     {
         $cost = $this->usageTracker->calculateCost(
@@ -40,6 +46,10 @@ class CostAlertListener implements ShouldQueue
         $this->sendSlackAlert($event, $cost);
     }
 
+    /**
+     * Post a formatted cost alert to the configured Slack webhook URL.
+     * Logs a warning and skips silently if no webhook URL is configured.
+     */
     private function sendSlackAlert(AiCallCompleted $event, float $cost): void
     {
         $webhookUrl = config('services.slack.alerts_webhook_url');
@@ -51,10 +61,10 @@ class CostAlertListener implements ShouldQueue
         }
 
         Http::post($webhookUrl, [
-            'text' => "🚨 *AI Cost Alert*\n".
-                "Feature: `{$event->feature}`\n".
-                "Model: `{$event->model}`\n".
-                "Cost: `\${$cost}`\n".
+            'text' => "🚨 *AI Cost Alert*\n" .
+                "Feature: `{$event->feature}`\n" .
+                "Model: `{$event->model}`\n" .
+                "Cost: `\${$cost}`\n" .
                 "Tokens: `{$event->promptTokens}` prompt / `{$event->completionTokens}` completion",
         ]);
     }

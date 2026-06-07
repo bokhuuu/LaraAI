@@ -8,8 +8,10 @@ use App\AI\Services\UsageTrackingService;
 use App\Events\AiCallCompleted;
 
 /**
- * Listens for AiCallCompleted events and tracks token usage and cost.
- * Runs synchronously - writing a DB row is fast enough to not need a queue.
+ * Writes token usage and cost to the database after every AI call.
+ *
+ * Listens for AiCallCompleted and calls UsageTrackingService::track().
+ * Runs synchronously - writing one DB row is fast enough to not need a queue.
  */
 class UsageTrackingListener
 {
@@ -17,9 +19,7 @@ class UsageTrackingListener
         private UsageTrackingService $usageTracker
     ) {}
 
-    /**
-     * Handle the event.
-     */
+    /** Record token usage and cost for this AI call to ai_usage_logs. */
     public function handle(AiCallCompleted $event): void
     {
         $this->usageTracker->track(

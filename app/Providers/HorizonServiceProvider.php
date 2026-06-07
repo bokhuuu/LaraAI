@@ -6,10 +6,18 @@ use Illuminate\Support\Facades\Gate;
 use Laravel\Horizon\Horizon;
 use Laravel\Horizon\HorizonApplicationServiceProvider;
 
+/**
+ * Configures Horizon dashboard access and failure notifications.
+ *
+ * Restricts /horizon to authorized emails in production.
+ * Sends email and Slack alerts when queue workers fail or go down.
+ * Notification destinations configured via .env - no hardcoded values.
+ */
 class HorizonServiceProvider extends HorizonApplicationServiceProvider
 {
     /**
-     * Bootstrap any application services.
+     * Wire email and Slack notification channels for queue failure alerts.
+     * Both destinations read from .env so they can differ per environment.
      */
     public function boot(): void
     {
@@ -20,9 +28,8 @@ class HorizonServiceProvider extends HorizonApplicationServiceProvider
     }
 
     /**
-     * Register the Horizon gate.
-     *
-     * This gate determines who can access Horizon in non-local environments.
+     * Restrict Horizon dashboard access to authorized emails only.
+     * In production only HORIZON_ALERT_EMAIL can view the dashboard.
      */
     protected function gate(): void
     {

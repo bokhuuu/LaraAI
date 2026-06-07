@@ -9,11 +9,18 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Adds security headers to every HTTP response.
- * Protects against XSS, clickjacking, MIME sniffing and other browser attacks.
+ * Adds OWASP recommended security headers to every HTTP response.
+ *
+ * Protects against clickjacking, MIME sniffing, XSS and unwanted
+ * browser feature access. Registered globally in bootstrap/app.php
+ * so every response is covered automatically.
  */
 class SecurityHeaders
 {
+    /**
+     * Attach security headers to the response before it reaches the browser.
+     * Headers are added after the request is handled so they apply to every response type.
+     */
     public function handle(Request $request, Closure $next): Response
     {
         $response = $next($request);

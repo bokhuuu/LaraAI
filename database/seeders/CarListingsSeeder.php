@@ -6,13 +6,13 @@ use App\AI\Services\EmbeddingService;
 use Illuminate\Database\Seeder;
 
 /**
- * Seeds 55 realistic car listings as embedding documents for RAG demonstration.
- * Each listing is written so cosine similarity returns
- * meaningful results for queries like "cheap SUV under $20k" or "diesel BMW".
+ * Indexes 55 realistic car listings as embedding vectors for RAG demonstration.
+ * Calls EmbeddingService::generateAndStore() for each listing - converts text
+ * to a vector and saves it to the documents table so searchListings() can find
+ * relevant cars by meaning, not just keywords.
  *
- * TEMPLATE USAGE: Delete this file and create your own domain seeder.
- * Use EmbeddingService::generateAndStore() to index your domain content.
- * Run: php artisan db:seed --class=CarListingsSeeder
+ * TEMPLATE: Delete this file and create your own domain seeder.
+ * The pattern stays identical - only the content changes.
  */
 class CarListingsSeeder extends Seeder
 {
@@ -22,10 +22,10 @@ class CarListingsSeeder extends Seeder
 
         foreach ($this->listings() as $listing) {
             $service->generateAndStore($listing);
-            $this->command->info('Indexed: '.substr($listing, 0, 60).'...');
+            $this->command->info('Indexed: ' . substr($listing, 0, 60) . '...');
         }
 
-        $this->command->info('Done. '.count($this->listings()).' listings indexed.');
+        $this->command->info('Done. ' . count($this->listings()) . ' listings indexed.');
     }
 
     /**

@@ -6,26 +6,24 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
+use App\AI\Services\EmbeddingService;
+use App\Models\Document;
 
 /**
- * HealthCheckController
+ * Health check endpoint for monitoring tools and load balancers.
  *
- * Checks connectivity of all critical services.
- * Returns JSON with status of: database, redis, queue, ai provider.
+ * Checks every critical service - database, Redis, queue, and AI provider.
+ * Returns 200 if all critical services are healthy, 503 if any are down.
+ * Queue failure is a warning only and does not affect the overall status.
  *
  * Endpoint: GET /api/ai/health
- * Healthy response: HTTP 200
- * Unhealthy response: HTTP 503
- *
- * TEMPLATE USAGE: Add additional service checks as needed.
- * Used by monitoring tools and load balancers.
  */
 class HealthCheckController extends Controller
 {
     /**
-     * Run all service health checks and return status report.
-     * Queue check is a warning only - does not affect overall health status.
+     * Run all service checks and return a status report.
+     * AI check generates and immediately deletes a real embedding
+     * to verify the full pipeline works - not just that the server is reachable.
      */
     public function check(): JsonResponse
     {
@@ -36,7 +34,7 @@ class HealthCheckController extends Controller
             DB::connection()->getPdo();
             $services['database'] = 'ok';
         } catch (\Throwable $e) {
-            $services['database'] = 'failed: '.$e->getMessage();
+            $services['database'] = 'failed: ' . $e->getMessage();
             $healthy = false;
         }
 
@@ -44,27 +42,24 @@ class HealthCheckController extends Controller
             Cache::store('redis')->put('health_check', true, 10);
             $services['redis'] = 'ok';
         } catch (\Throwable $e) {
-            $services['redis'] = 'failed: '.$e->getMessage();
+            $services['redis'] = 'failed: ' . $e->getMessage();
             $healthy = false;
         }
 
         try {
             \Artisan::call('horizon:status');
             $output = trim(\Artisan::output());
-            $services['queue'] = str_contains(strtolower($output), 'running') ? 'ok' : 'warning: '.$output;
+            $services['queue'] = str_contains(strtolower($output), 'running') ? 'ok' : 'warning: ' . $output;
         } catch (\Throwable $e) {
-            $services['queue'] = 'warning: '.$e->getMessage();
+            $services['queue'] = 'warning: ' . $e->getMessage();
         }
 
         try {
-            $aiUrl = config('ai.providers.default') === 'ollama'
-                ? config('prism.providers.ollama.url')
-                : 'https://openrouter.ai/api/v1/models';
-
-            $response = Http::timeout(3)->get($aiUrl);
-            $services['ai'] = $response->successful() ? 'ok' : 'failed: unreachable';
+            $document = app(EmbeddingService::class)->generateAndStore('health check test');
+            $document->delete();
+            $services['ai'] = 'ok';
         } catch (\Throwable $e) {
-            $services['ai'] = 'failed: '.$e->getMessage();
+            $services['ai'] = 'failed: ' . $e->getMessage();
             $healthy = false;
         }
 

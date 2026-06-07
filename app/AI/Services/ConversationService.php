@@ -11,18 +11,14 @@ use Prism\Prism\ValueObjects\Messages\SystemMessage;
 use Prism\Prism\ValueObjects\Messages\UserMessage;
 
 /**
- * ConversationService
+ * Manages back-and-forth chat conversations with memory.
  *
- * Manages stateful AI conversations without LarAgent agent loop.
- * Use when you need simple chat without tool calling or autonomous decisions.
+ * AI is stateless - it remembers nothing between calls.
+ * This service stores every message in the DB and replays
+ * the full history on each turn so the AI has context.
  *
- * - startConversation(): creates conversation + system prompt
- * - addMessage(): saves any message to history
- * - getMessages(): loads history as Prism message objects
- * - chat(): full conversation turn with rate limiting
- *
- * TEMPLATE USAGE: Use for simple chatbots and Q&A flows.
- * For agents with tool calling, use LarAgent instead.
+ * Use for simple chat and Q&A. For tool calling or autonomous
+ * agents use LarAgent instead.
  */
 class ConversationService
 {
@@ -30,7 +26,7 @@ class ConversationService
         private RateLimitingService $rateLimiter
     ) {}
 
-    /** Create new conversation session with system prompt as first message. */
+    /** Create a new conversation and set the AI's role via system prompt. */
     public function startConversation(string $systemPrompt): Conversation
     {
         $conversation = Conversation::create();
@@ -44,7 +40,7 @@ class ConversationService
         return $conversation;
     }
 
-    /** Save a message to conversation history. Role: 'user' | 'assistant' | 'system' */
+    /** Save a single message to the conversation history. Role: 'user' | 'assistant' | 'system' */
     public function addMessage(Conversation $conversation, string $role, string $content): Message
     {
         return Message::create([
@@ -54,13 +50,16 @@ class ConversationService
         ]);
     }
 
-    /** Load full conversation history as Prism message objects for AI consumption. */
+    /**
+     * Load the full conversation history from DB as Prism message objects.
+     * Called before every AI request to rebuild context from scratch.
+     */
     public function getMessages(Conversation $conversation): array
     {
         return $conversation->messages()
             ->orderBy('created_at')
             ->get()
-            ->map(fn (Message $message) => match ($message->role) {
+            ->map(fn(Message $message) => match ($message->role) {
                 'user' => new UserMessage($message->content),
                 'assistant' => new AssistantMessage($message->content),
                 'system' => new SystemMessage($message->content),
@@ -70,10 +69,8 @@ class ConversationService
     }
 
     /**
-     * Execute one full conversation turn with rate limiting:
-     * save user message → load history → call AI → save response → return text.
-     *
-     * @throws \RuntimeException When rate limit exceeded
+     * Handle one full conversation turn.
+     * Saves the user message, sends full history to AI, saves and returns the response.
      */
     public function chat(Conversation $conversation, string $userMessage, string $userId = 'default'): string
     {

@@ -8,17 +8,14 @@ use Prism\Prism\Enums\Provider;
 use Prism\Prism\Facades\Prism;
 
 /**
- * TextGenerationService
+ * Sends prompts to an AI model and returns the generated text.
  *
- * Handles basic AI text generation with:
- * - Response caching (Cache::remember with md5 hash key)
- * - Rate limiting per user per feature
- * - Token usage tracking
- * - Automatic retry on failure (withClientRetry)
+ * Caches responses in Redis so identical prompts don't hit the AI twice.
+ * Checks and updates per-user rate limits on every call.
+ * Fires AiCallCompleted so usage gets tracked automatically.
  *
- * TEMPLATE USAGE: Inject this service anywhere you need
- * simple AI text generation. Extend generate() method
- * to add domain-specific logic.
+ * Inject this service wherever plain text generation is needed.
+ * Domain-specific logic belongs in Agents and Jobs - not here.
  */
 class TextGenerationService
 {
@@ -27,13 +24,11 @@ class TextGenerationService
     ) {}
 
     /**
-     * Generate AI text response with caching, rate limiting and usage tracking.
+     * Run a prompt through the AI and return the response text.
      *
-     * @param  string  $prompt  - User message or question
-     * @param  string  $systemPrompt  - Developer instructions (optional)
-     * @param  string  $userId  - For rate limiting - use auth user ID in production
-     *
-     * @throws \RuntimeException - When rate limit exceeded
+     * Blocks the call if the user has hit their rate limit.
+     * Returns a cached response if this exact prompt was seen before.
+     * Fires AiCallCompleted only on real AI calls, never on cache hits.
      */
     public function generate(string $prompt, string $systemPrompt = '', string $userId = 'default'): string
     {
@@ -41,7 +36,7 @@ class TextGenerationService
             throw new \RuntimeException('Rate limit exceeded for text generation');
         }
 
-        $cacheKey = 'ai_response:'.md5($systemPrompt.$prompt);
+        $cacheKey = 'ai_response:' . md5($systemPrompt . $prompt);
 
         $text = Cache::remember($cacheKey, ttl: config('ai.cache_ttl', 3600), callback: function () use ($prompt, $systemPrompt) {
             $request = Prism::text()

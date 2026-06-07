@@ -8,24 +8,24 @@ use Prism\Prism\Enums\Provider;
 use Prism\Prism\Facades\Prism;
 
 /**
- * EmbeddingService
+ * Converts text into vectors (embeddings) and searches them by meaning.
  *
- * Handles text embeddings and semantic search:
- * - generateAndStore(): converts text to vector, saves to documents table
- * - search(): finds semantically similar documents using cosine similarity
+ * How it works:
+ * - Store phase: text goes in, a list of numbers (vector) comes out, both saved to DB
+ * - Search phase: convert the query to a vector, compare against all stored vectors
+ * - Closest vectors = most similar meaning, returned ranked by score
  *
- * Used for RAG (Retrieval Augmented Generation).
- * TEMPLATE USAGE: Store your domain content as documents,
- * then search by meaning instead of keywords.
+ * This is the foundation of RAG - find relevant documents by meaning,
+ * inject them into the AI prompt as context before asking the question.
  *
- * NOTE: search() loads all documents into memory for comparison.
- * For large datasets (1000+ documents), consider pgvector extension.
+ * NOTE: loads all documents into memory for comparison.
+ * For 1000+ documents switch to pgvector for DB-level vector search.
  */
 class EmbeddingService
 {
     /**
-     * Convert text to embedding vector and store in documents table.
-     * Used to index content for later semantic search.
+     * Convert text to a vector and save it to the documents table.
+     * Run this once per document to make it searchable by meaning.
      */
     public function generateAndStore(string $content): Document
     {
@@ -38,9 +38,8 @@ class EmbeddingService
     }
 
     /**
-     * Find documents most semantically similar to query.
-     * Returns collection of ['document' => Document, 'score' => float].
-     * Score range: 0.0 (unrelated) to 1.0 (identical meaning).
+     * Find documents whose meaning is closest to the query.
+     * Returns documents ranked by similarity score: 1.0 = identical meaning, 0.0 = unrelated.
      */
     public function search(string $query, ?int $limit = null): Collection
     {
@@ -61,7 +60,7 @@ class EmbeddingService
             ->values();
     }
 
-    /** Convert text to numeric vector using embedding model. */
+    /** Ask the AI model to convert text into a numeric vector. */
     private function generateEmbedding(string $text): array
     {
         return Prism::embeddings()
@@ -72,8 +71,9 @@ class EmbeddingService
     }
 
     /**
-     * Measure similarity between two vectors.
-     * Returns 0.0 (unrelated) to 1.0 (identical meaning).
+     * Compare two vectors and return how similar they are.
+     * Measures the angle between them - small angle means similar meaning.
+     * Returns 0.0 (completely unrelated) to 1.0 (identical meaning).
      */
     private function cosineSimilarity(array $a, array $b): float
     {

@@ -6,15 +6,13 @@ use App\AI\Services\ConversationService;
 use Illuminate\Console\Command;
 
 /**
- * Chat Command
+ * Interactive terminal chatbot for development and testing.
  *
- * Interactive terminal chatbot demonstrating stateful AI conversation.
- * Uses ConversationService for message history management.
+ * Starts a conversation via ConversationService and loops until the user types 'exit'.
+ * Full message history is maintained across each turn so the AI remembers context.
+ * Useful for quickly testing AI responses without a browser.
  *
  * Usage: php artisan ai:chat
- * Type 'exit' to end the conversation.
- *
- * TEMPLATE USAGE: Replace system prompt with your domain context.
  */
 class Chat extends Command
 {
@@ -27,6 +25,10 @@ class Chat extends Command
         parent::__construct();
     }
 
+    /**
+     * Start a conversation and loop until the user types 'exit'.
+     * Each message is saved to DB and full history sent to AI on every turn.
+     */
     public function handle(): void
     {
         $conversation = $this->conversationService->startConversation(
@@ -45,7 +47,7 @@ class Chat extends Command
 
             $reply = $this->conversationService->chat($conversation, $userInput);
 
-            $this->info('AI: '.$reply);
+            $this->info('AI: ' . $reply);
         }
     }
 }

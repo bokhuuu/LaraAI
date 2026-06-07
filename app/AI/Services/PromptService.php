@@ -7,29 +7,25 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 /**
- * PromptService
+ * Stores and versions system prompts in the database.
  *
- * Manages versioned system prompts stored in database.
- * - get(): returns active prompt content or fallback
- * - create(): creates new version, deactivates previous
- * - rollback(): restores previous version
- * - getHistory(): returns all versions for a key
- *
- * TEMPLATE USAGE: Store all system prompts in DB.
- * Change prompts without redeployment.
- * Use prompt keys like 'assistant', 'analyzer', 'extractor'.
+ * Instead of hardcoding prompts in PHP files, prompts live in the DB.
+ * This means AI behavior can be changed instantly without redeployment.
+ * Every change creates a new version - nothing is ever overwritten or lost.
+ * If a new prompt performs worse, rollback restores the previous one instantly.
  */
 class PromptService
 {
-    /** Get active prompt content for key. Returns fallback if no active version exists. */
+    /** Return the currently active prompt for this key, or fallback if none exists. */
     public function get(string $key, string $fallback = ''): string
     {
         return PromptVersion::getActive($key) ?? $fallback;
     }
 
     /**
-     * Create new prompt version, deactivating all previous versions.
-     * Wrapped in transaction - either both operations succeed or neither does.
+     * Save a new prompt version and mark it as active.
+     * Previous versions are deactivated but kept in DB for rollback.
+     * Wrapped in a transaction so active state is always consistent.
      */
     public function create(string $key, string $content, string $description = ''): PromptVersion
     {
@@ -49,7 +45,8 @@ class PromptService
     }
 
     /**
-     * Restore previous prompt version.
+     * Reactivate the previous prompt version.
+     * Use when a new prompt performs worse and you need to revert instantly.
      * Returns null if already at version 1 or no active version exists.
      */
     public function rollback(string $key): ?PromptVersion
@@ -75,7 +72,7 @@ class PromptService
         });
     }
 
-    /** Get all versions for a key, newest first. */
+    /** Return all prompt versions for this key, newest first. */
     public function getHistory(string $key): Collection
     {
         return PromptVersion::where('key', $key)

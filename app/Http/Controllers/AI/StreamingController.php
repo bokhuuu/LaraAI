@@ -13,26 +13,25 @@ use Prism\Prism\Streaming\Events\TextDeltaEvent;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
- * StreamingController
+ * Streams AI responses to the browser token by token via Server-Sent Events.
  *
- * Demonstrates AI streaming responses via Server-Sent Events (SSE).
- * Browser receives tokens in real-time as AI generates them.
+ * Instead of waiting for the full response, the browser receives each word
+ * as the AI generates it - same experience as ChatGPT's typing effect.
  *
- * Endpoints:
- * - GET /stream → SSE stream of AI response chunks
- * - GET /stream-demo → Chat UI demo page
- *
- * TEMPLATE USAGE: Replace prompt with your domain question.
- * Use EventSource in browser to receive chunks.
+ * The browser connects via EventSource, receives chunks as they arrive
+ * and the stream closes when the AI finishes.
  */
 class StreamingController extends Controller
 {
     /**
-     * Stream AI response via Server-Sent Events.
-     * Each token sent as: data: {"text":"..."}\n\n
+     * Open an SSE connection and stream AI response chunks to the browser.
+     * Each chunk arrives as: data: {"text":"..."}\n\n
      * Stream ends with: data: [DONE]\n\n
      *
-     * TEMPLATE USAGE: Replace systemPrompt and prompt with your domain content.
+     * ob_get_level() guard prevents Nginx output buffering from holding chunks.
+     * X-Accel-Buffering header tells Nginx to pass chunks through immediately.
+     *
+     * To protect this endpoint add ->middleware('auth') on the route in routes/web.php.
      */
     public function stream(StreamPromptRequest $request): StreamedResponse
     {
@@ -47,7 +46,7 @@ class StreamingController extends Controller
 
             foreach ($stream as $chunk) {
                 if ($chunk instanceof TextDeltaEvent) {
-                    echo 'data: '.json_encode(['text' => $chunk->delta])."\n\n";
+                    echo 'data: ' . json_encode(['text' => $chunk->delta]) . "\n\n";
                     if (ob_get_level() > 0) {
                         ob_flush();
                     }

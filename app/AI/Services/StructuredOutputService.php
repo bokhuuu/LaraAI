@@ -8,23 +8,18 @@ use Prism\Prism\Facades\Prism;
 use Prism\Prism\Schema\ObjectSchema;
 
 /**
- * StructuredOutputService
- *
  * Extracts structured data from unstructured text using AI.
- * Returns PHP array matching the provided ObjectSchema.
  *
- * TEMPLATE USAGE: Define your schema, pass any text,
- * get back clean structured data ready for DB insertion.
- * Example: extract product details from a description.
+ * Instead of getting a plain text response, you define a schema
+ * and the AI is forced to return data matching that exact shape.
+ * Result is a clean PHP array ready for DB insertion or further processing.
+ *
+ * Fires AiCallCompleted after every call for usage tracking.
  */
 class StructuredOutputService
 {
     /**
-     * Extract structured data from text matching the provided schema.
-     *
-     * @param  string  $content  - Raw text to extract data from
-     * @param ObjectSchema - $schema Defines the shape of expected output
-     * @return array - PHP array matching schema structure
+     * Parse raw text and return a PHP array matching the given schema.
      */
     public function extract(string $content, ObjectSchema $schema): array
     {

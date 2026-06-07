@@ -117,8 +117,6 @@ Vision      → OpenRouter always (Ollama has no vision support)
 
 ## Quick Start
 
-## Quick Start
-
 ```bash
 git clone git@github.com:bokhuuu/LaraAI.git
 cd LaraAI

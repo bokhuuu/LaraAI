@@ -9,8 +9,13 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 /**
- * Validates incoming prompt requests.
- * Prevents oversized inputs, empty prompts and basic injection attempts.
+ * Validates incoming prompt requests before they reach the AI.
+ *
+ * Blocks empty inputs, oversized prompts and naive prompt injection attempts.
+ * Returns JSON error responses instead of redirects since this is an API endpoint.
+ *
+ * Note: the regex filter catches obvious injection patterns only.
+ * For high-risk applications add a dedicated AI moderation layer on top.
  */
 class StreamPromptRequest extends FormRequest
 {
@@ -26,9 +31,6 @@ class StreamPromptRequest extends FormRequest
                 'nullable',
                 'string',
                 'max:2000',
-                // Basic prompt injection filter - covers naive attacks
-                // Production recommendation: add AI moderation layer (OpenAI Moderation API)
-                // or dedicated content filtering service for high-risk applications
                 'not_regex:/\bignore\b.*\binstructions\b|\bsystem\b.*\bprompt\b/i',
             ],
         ];
@@ -42,9 +44,6 @@ class StreamPromptRequest extends FormRequest
         ];
     }
 
-    /**
-     * Return JSON error response instead of redirect for API endpoints.
-     */
     protected function failedValidation(Validator $validator): void
     {
         throw new HttpResponseException(

@@ -5,8 +5,6 @@ namespace App\AI\Services;
 use Illuminate\Support\Facades\Cache;
 
 /**
- * RateLimitingService
- *
  * Controls AI call frequency per user per feature.
  * Uses Redis cache with TTL for automatic counter reset.
  *

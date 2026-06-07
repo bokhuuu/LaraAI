@@ -7,23 +7,22 @@ use Prism\Prism\Facades\Prism;
 use Prism\Prism\Tool;
 
 /**
- * ToolService
+ * Runs AI prompts with registered tools, without a full agent loop.
  *
- * Manages Prism tool calling without LarAgent:
- * - registerTool(): adds a Tool to the service
- * - run(): sends prompt with registered tools, AI decides which to call
+ * The AI sees the available tools and decides which to call mid-response.
+ * Your PHP function runs, the result feeds back to the AI
+ * and the AI produces a final answer using that result.
  *
- * TEMPLATE USAGE: Use when you need tool calling without
- * full agent loop. Register tools, run prompt, get result.
- * For full agent with memory/history, use LarAgent instead.
+ * Lighter alternative to LarAgent - no history, no memory, just one prompt + tools.
+ * For full agents with history and RAG, use LarAgent instead.
  */
 class ToolService
 {
     private array $tools = [];
 
     /**
-     * Register a tool the AI can call during run().
-     * Returns $this for method chaining: $service->registerTool($t1)->registerTool($t2)
+     * Add a tool the AI is allowed to call during run().
+     * Chain multiple calls to register several tools at once.
      */
     public function registerTool(Tool $tool): self
     {
@@ -33,9 +32,8 @@ class ToolService
     }
 
     /**
-     * Send prompt with registered tools. AI decides which tools to call.
-     *
-     * @param  int  $maxSteps  Max tool calling iterations before forcing final answer
+     * Send a prompt to the AI with all registered tools available.
+     * The AI decides which tools to call, runs them, then returns a final answer.
      */
     public function run(string $prompt, int $maxSteps = 5): string
     {

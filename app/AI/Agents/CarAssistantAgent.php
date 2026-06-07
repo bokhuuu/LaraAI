@@ -8,39 +8,33 @@ use LarAgent\Agent;
 use LarAgent\Attributes\Tool;
 
 /**
- * CarAssistantAgent - Example Domain AI Agent
+ * Example domain agent - replace this for your own project.
  *
- * Built on: LarAgent (loop + history) → Prism (API calls) → Ollama/OpenRouter (AI)
+ * Extends LarAgent which handles the agent loop automatically:
+ * read message → decide which tool to call → call it → observe result → answer.
+ * Conversation history, tool discovery and MCP are all handled by LarAgent.
  *
- * LarAgent handles automatically:
- * → agent loop (think → call tool → observe → answer)
- * → conversation history saved to database
- * → tool discovery via #[Tool] PHP attributes
- * → MCP server connections
+ * What this class adds on top:
+ * → Domain tools (searchByBrand, getAllCars, searchListings)
+ * → RAG via searchListings using EmbeddingService
+ * → System prompt pulled from DB via PromptService
+ * → Model and provider wired from config/ai.php
  *
- * We add on top:
- * → RAG search (searchListings uses EmbeddingService)
- * → DB prompt versioning (instructions() pulls from PromptService)
- * → Config-driven model/provider (model() and getProviderName())
- *
- * TEMPLATE: To adapt for new domain -
- * rename class, replace tool methods with your domain logic.
- * All infrastructure (history, MCP, RAG, config) works unchanged.
+ * To adapt for a new domain: rename this class, replace the tool
+ * methods with your domain logic. All infrastructure stays identical.
  */
 class CarAssistantAgent extends Agent
 {
-    /** Agent identifier used for logging and history storage */
     protected $name = 'CarAssistantAgent';
 
-    /**
-     * History storage: 'in_memory' | 'cache' | 'database'
-     * Use 'database' for production (persists across sessions)
-     */
     protected $history = 'database';
 
-    /** External tool classes - leave empty when using #[Tool] attribute methods */
     protected $tools = [];
 
+    /**
+     * Set provider from config before LarAgent initializes.
+     * Required because LarAgent reads provider in the parent constructor.
+     */
     public function __construct(string $sessionId)
     {
         $this->provider = config('ai.providers.default', 'ollama');
@@ -48,15 +42,16 @@ class CarAssistantAgent extends Agent
     }
 
     /**
-     * MCP servers for external tool access.
-     * 'mcp_server_memory' = cross-session knowledge graph.
-     * Configure servers in config/laragent.php
+     * MCP servers this agent connects to.
+     * 'mcp_server_memory' gives the agent a cross-session knowledge graph -
+     * it can remember facts about users across separate conversations.
      */
     protected $mcpServers = ['mcp_server_memory'];
 
     /**
-     * System prompt pulled from database via PromptService.
-     * Falls back to hardcoded string if no DB version exists.
+     * Load the system prompt from the database via PromptService.
+     * Falls back to a hardcoded string if no DB version exists yet.
+     * Update the prompt in DB to change agent behavior without redeploying.
      */
     public function instructions()
     {
@@ -66,22 +61,21 @@ class CarAssistantAgent extends Agent
         );
     }
 
-    /** Returns model from config. Overrides $model property. Set AI_AGENT_MODEL in .env */
+    /** Return the model name from config. Set AI_AGENT_MODEL in .env to change it. */
     public function model()
     {
         return config('ai.models.agent', 'llama3.1:8b');
     }
 
-    /** Pre-processes user message. Override to inject context or formatting. */
+    /** Pre-process the user message before it reaches the agent. Override to inject context. */
     public function prompt($message)
     {
         return $message;
     }
 
     /**
-     * EXAMPLE TOOL: Search by brand name.
-     * TEMPLATE: Replace hardcoded array with real DB query:
-     * return json_encode(Car::where('brand', $brand)->get());
+     * Tool: find cars by brand name.
+     * Currently uses a hardcoded array - replace with a real DB query for production.
      */
     #[Tool('Search cars by brand name')]
     public function searchByBrand(string $brand): string
@@ -94,16 +88,15 @@ class CarAssistantAgent extends Agent
 
         $results = array_filter(
             $cars,
-            fn ($car) => strtolower($car['brand']) === strtolower($brand)
+            fn($car) => strtolower($car['brand']) === strtolower($brand)
         );
 
         return json_encode(array_values($results));
     }
 
     /**
-     * EXAMPLE TOOL: Get all available items.
-     * TEMPLATE: Replace with real DB query:
-     * return json_encode(Car::all());
+     * Tool: return all available cars.
+     * Currently uses a hardcoded array - replace with a real DB query for production.
      */
     #[Tool('Get all available cars')]
     public function getAllCars(): string
@@ -118,9 +111,9 @@ class CarAssistantAgent extends Agent
     }
 
     /**
-     * RAG TOOL: Finds semantically similar documents using embeddings.
-     * TEMPLATE: Works for any domain - store content via
-     * EmbeddingService::generateAndStore(), then this searches it.
+     * Tool: find semantically similar listings using RAG.
+     * Converts the query to a vector and finds the closest matches in the documents table.
+     * Works for any domain - store content via EmbeddingService::generateAndStore() first.
      */
     #[Tool('Search car listings by description or requirements')]
     public function searchListings(string $query): string
@@ -128,7 +121,7 @@ class CarAssistantAgent extends Agent
         $service = app(EmbeddingService::class);
         $results = $service->search($query, 3);
 
-        $listings = $results->map(fn ($result) => $result['document']->content)->toArray();
+        $listings = $results->map(fn($result) => $result['document']->content)->toArray();
 
         return json_encode($listings);
     }

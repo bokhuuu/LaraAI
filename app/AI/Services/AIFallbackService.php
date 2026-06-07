@@ -7,23 +7,21 @@ use Prism\Prism\Enums\Provider;
 use Prism\Prism\Facades\Prism;
 
 /**
- * AIFallbackService
+ * Generates AI text with automatic provider fallback for high availability.
  *
- * Provides resilient AI text generation with automatic fallback.
- * Tries providers in order: OpenRouter first, Ollama as fallback.
- * Each provider retried twice before moving to next.
+ * If the primary provider fails after retries, automatically switches to the next
+ * provider in the chain defined in config/ai.php under 'fallback'.
+ * Users get a response even when one provider is down.
  *
- * TEMPLATE USAGE: Use instead of TextGenerationService when
- * high availability is critical. Configure fallback chain
- * in config/ai.php fallback array.
+ * Use this instead of TextGenerationService when uptime is critical.
  */
 class AIFallbackService
 {
-    /** Load provider chain from config/ai.php fallback array. */
+    /** Load the ordered list of providers and models to try from config. */
     private function getProviders(): array
     {
         return collect(config('ai.fallback'))
-            ->map(fn ($p) => [
+            ->map(fn($p) => [
                 'provider' => Provider::from($p['provider']),
                 'model' => $p['model'],
             ])
@@ -31,10 +29,9 @@ class AIFallbackService
     }
 
     /**
-     * Generate text with automatic provider fallback.
-     * Tries each provider in order, retrying twice before moving to next.
-     *
-     * @throws \RuntimeException When all providers fail
+     * Generate text trying each provider in order until one succeeds.
+     * Each provider is retried before moving to the next.
+     * Throws RuntimeException only if every provider in the chain fails.
      */
     public function generateText(string $prompt, string $systemPrompt = ''): string
     {
@@ -74,7 +71,7 @@ class AIFallbackService
         }
 
         throw new \RuntimeException(
-            'All AI providers failed: '.$lastException?->getMessage()
+            'All AI providers failed: ' . $lastException?->getMessage()
         );
     }
 }

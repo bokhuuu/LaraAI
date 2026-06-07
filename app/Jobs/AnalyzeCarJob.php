@@ -11,36 +11,37 @@ use Illuminate\Support\Facades\Log;
 use Prism\Prism\Schema\ObjectSchema;
 
 /**
- * Example async job demonstrating AI processing in queue.
- * Extracts structured data from text using StructuredOutputService.
+ * Example async job - rename and adapt for your own domain.
  *
- * Features demonstrated:
- * - ShouldQueue interface (async execution)
- * - Batchable trait (group multiple jobs)
- * - Retry logic ($tries, $backoff)
- * - Failed job handling (failed() method)
- * - Service injection in handle()
+ * Runs AI processing in the background queue instead of during the HTTP request.
+ * Demonstrates: async execution, batching, retry with backoff, failure handling.
  *
- * TEMPLATE USAGE: Rename to YourDomainAnalyzeJob.
- * Replace schema and logic in handle() with your domain.
+ * Dispatched to Redis queue, picked up and executed by Laravel Horizon.
+ * Retries up to 3 times with 60 second gaps before calling failed().
  */
 class AnalyzeCarJob implements ShouldQueue
 {
     use Batchable, Queueable;
 
+    /** How many times to attempt this job before giving up and calling failed(). */
     public int $tries = 3;
 
+    /** Seconds to wait between retry attempts after a failure. */
     public int $backoff = 60;
 
-    /** Text content to extract structured data from. */
+    /**
+     * Store the data this job needs when it runs.
+     * Serialized into Redis on dispatch, deserialized when the worker picks it up.
+     */
     public function __construct(
         public readonly string $content,
         public readonly ObjectSchema $schema,
     ) {}
 
     /**
-     * Extract structured data from content and store as a document.
-     * TEMPLATE: Replace Document::create() with EmbeddingService::generateAndStore()
+     * Run the AI extraction and store the result.
+     * Called by the queue worker - never called directly.
+     * Replace Document::create() with EmbeddingService::generateAndStore()
      * to automatically index content for RAG search.
      */
     public function handle(StructuredOutputService $service): void
@@ -55,7 +56,10 @@ class AnalyzeCarJob implements ShouldQueue
         Log::info('Content analyzed', $result);
     }
 
-    /** Log error details when all retry attempts are exhausted. */
+    /**
+     * Called when all retry attempts are exhausted.
+     * Log the failure here - in production also alert via Slack or mark record as failed.
+     */
     public function failed(\Throwable $exception): void
     {
         Log::error('AnalyzeCarJob failed', [

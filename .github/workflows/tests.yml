@@ -1,3 +1,10 @@
+# Runs the full Pest test suite on every push to main and every pull request.
+# Spins up MySQL, installs PHP 8.4 with required extensions, then runs tests.
+# If any test fails the push is marked as failed on GitHub.
+#
+# Required secrets: none (uses root MySQL for test DB)
+# Required env: DB_* variables injected directly in the 'Run tests' step
+
 name: Tests
 
 on:

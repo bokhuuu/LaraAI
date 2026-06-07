@@ -8,10 +8,18 @@ use Laravel\Telescope\IncomingEntry;
 use Laravel\Telescope\Telescope;
 use Laravel\Telescope\TelescopeApplicationServiceProvider;
 
+/**
+ * Configures Telescope debugging dashboard behavior per environment.
+ *
+ * Local: records everything for full visibility during development.
+ * Production: records only exceptions, failures, and monitored tags.
+ * Sensitive request data (cookies, tokens) stripped in production automatically.
+ */
 class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
 {
     /**
-     * Register any application services.
+     * Set up Telescope filters - limit what gets recorded in production
+     * to avoid filling the DB and exposing sensitive data.
      */
     public function register(): void
     {
@@ -23,16 +31,17 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
 
         Telescope::filter(function (IncomingEntry $entry) use ($isLocal) {
             return $isLocal ||
-                   $entry->isReportableException() ||
-                   $entry->isFailedRequest() ||
-                   $entry->isFailedJob() ||
-                   $entry->isScheduledTask() ||
-                   $entry->hasMonitoredTag();
+                $entry->isReportableException() ||
+                $entry->isFailedRequest() ||
+                $entry->isFailedJob() ||
+                $entry->isScheduledTask() ||
+                $entry->hasMonitoredTag();
         });
     }
 
     /**
-     * Prevent sensitive request details from being logged by Telescope.
+     * Strip cookies and CSRF tokens from logged requests in production.
+     * Skipped in local environment where full request data is useful for debugging.
      */
     protected function hideSensitiveRequestDetails(): void
     {
@@ -50,9 +59,9 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
     }
 
     /**
-     * Register the Telescope gate.
-     *
-     * This gate determines who can access Telescope in non-local environments.
+     * Restrict Telescope dashboard access in production.
+     * Add authorized emails to the array to grant access.
+     * Everyone can access it in local environment.
      */
     protected function gate(): void
     {

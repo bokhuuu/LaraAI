@@ -2,11 +2,20 @@
 
 /**
  * Central configuration for all AI-related settings.
- * Override values in .env file - no code changes needed.
+ * Every model, provider, limit, cost rate and threshold is defined here.
+ * Change behavior by setting values in .env - never edit PHP files directly.
  *
- * Providers: ollama (local dev), openrouter (production)
- * Models: configure per use case for cost/performance balance
+ * Sections:
+ * - cache_ttl: how long to reuse cached AI responses
+ * - models: which model to use per use case
+ * - providers: ollama for local dev, openrouter for production
+ * - fallback: provider chain for AIFallbackService
+ * - rate_limits: max calls per user per feature per time window
+ * - costs: USD rates per token per model for UsageTrackingService
+ * - retry: how many times to retry failed AI calls
+ * - default_system_prompt: fallback when no DB prompt exists
  */
+
 return [
     /*
     |--------------------------------------------------------------------------

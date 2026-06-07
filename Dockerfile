@@ -1,3 +1,7 @@
+# Builds the LaraAI application container.
+# Includes PHP 8.4, Nginx, Ghostscript (PDF), Imagick (PDF), Node.js (MCP), Redis extension.
+# Single container runs both Nginx and PHP-FPM via start.sh
+
 FROM php:8.4-fpm
 
 # System dependencies

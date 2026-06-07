@@ -7,16 +7,17 @@ namespace App\AI\Services;
 use App\Models\AiUsageLog;
 
 /**
- * Tracks token usage and cost per AI call.
- * Stores data in ai_usage_logs table.
+ * Records token usage and cost for every AI call to the database.
  *
- * Cost rates per model defined in config/ai.php under 'costs' key.
+ * Called automatically via UsageTrackingListener whenever AiCallCompleted fires.
+ * Stores which feature and model was used, how many tokens were consumed,
+ * and the USD cost calculated from rates defined in config/ai.php.
  */
 class UsageTrackingService
 {
     /**
-     * Track token usage and cost for an AI call.
-     * Creates a log entry in ai_usage_logs table.
+     * Save a single AI call's usage and cost to ai_usage_logs.
+     * Cost is calculated automatically from model rates in config.
      */
     public function track(
         string $feature,
@@ -39,12 +40,13 @@ class UsageTrackingService
     }
 
     /**
-     * Calculate cost based on model rates from config/ai.php costs section.
+     * Calculate USD cost for a call based on token counts and model rates.
+     * Rates are defined in config/ai.php under the 'costs' key.
      * Unknown models default to zero cost.
      */
     public function calculateCost(string $model, int $promptTokens, int $completionTokens): float
     {
-        $rates = config('ai.costs.'.$model, ['input' => 0, 'output' => 0]);
+        $rates = config('ai.costs.' . $model, ['input' => 0, 'output' => 0]);
 
         return ($promptTokens * $rates['input']) + ($completionTokens * $rates['output']);
     }

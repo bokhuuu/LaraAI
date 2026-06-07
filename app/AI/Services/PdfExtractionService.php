@@ -5,15 +5,13 @@ namespace App\AI\Services;
 use Spatie\PdfToImage\Pdf;
 
 /**
- * Extracts structured data from PDF files using vision AI.
- * Converts each page to an image, sends to MultiModalService,
- * merges results from all pages into a single array.
+ * Extracts structured data from PDF files by converting each page to an image
+ * and sending it to a vision AI model for analysis.
  *
- * Schema is passed at call time - no domain assumptions.
- * Works with any PDF: catalogues, invoices, brochures, reports.
+ * Pages are processed one by one, results merged into a single array.
+ * Temporary image files are created per page and deleted immediately after processing.
+ * Schema is passed at call time - no domain logic lives here.
  *
- * TEMPLATE USAGE: Pass any schema array and any PDF path.
- * Example schemas: product catalogue, property listing, invoice.
  * Requires Ghostscript and Imagick installed in the environment.
  */
 class PdfExtractionService
@@ -23,7 +21,8 @@ class PdfExtractionService
     ) {}
 
     /**
-     * Extract structured data from all pages of a PDF.
+     * Convert each PDF page to an image, extract data via vision AI, return merged results.
+     * Temporary images are always cleaned up even if extraction fails on a page.
      */
     public function extract(string $pdfPath, array $schema): array
     {
@@ -53,12 +52,12 @@ class PdfExtractionService
     }
 
     /**
-     * Convert a single PDF page to a temporary image file.
-     * Returns the absolute path to the saved image.
+     * Render a single PDF page as a temporary JPG image.
+     * Returns the path to the saved image for processing.
      */
     private function convertPageToImage(Pdf $pdf, int $page): string
     {
-        $imagePath = sys_get_temp_dir().'/pdf_page_'.$page.'_'.uniqid().'.jpg';
+        $imagePath = sys_get_temp_dir() . '/pdf_page_' . $page . '_' . uniqid() . '.jpg';
 
         $pdf->selectPage($page)->save($imagePath);
 
@@ -66,8 +65,8 @@ class PdfExtractionService
     }
 
     /**
-     * Send a page image to MultiModalService with a schema-driven prompt.
-     * Returns decoded array, or empty array if response is unparseable.
+     * Send a page image to the vision AI with a schema-driven prompt.
+     * Returns decoded array of extracted objects, or empty array if unparseable.
      */
     private function extractFromImage(string $imagePath, array $schema): array
     {
@@ -79,22 +78,22 @@ class PdfExtractionService
     }
 
     /**
-     * Build extraction prompt dynamically from schema fields.
-     * Example: ['name', 'price'] → "Extract the following fields as JSON: name, price."
+     * Build the extraction prompt from the schema fields.
+     * Instructs the AI to return only a valid JSON array with no extra text.
      */
     private function buildPrompt(array $schema): string
     {
         $fields = implode(', ', $schema);
 
         return 'Extract the following fields from this image as a JSON array of objects. '
-            ."Each object should contain: {$fields}. "
-            .'Return only valid JSON array, no explanation, no markdown, no code blocks. '
-            .'If the page contains no relevant data, return an empty array [].';
+            . "Each object should contain: {$fields}. "
+            . 'Return only valid JSON array, no explanation, no markdown, no code blocks. '
+            . 'If the page contains no relevant data, return an empty array [].';
     }
 
     /**
-     * Decode JSON response from vision model.
-     * Returns empty array if response is empty or unparseable - never crashes.
+     * Decode the vision AI's JSON response into a PHP array.
+     * Returns empty array on empty or invalid responses - never throws.
      */
     private function parseResponse(string $response): array
     {
@@ -113,10 +112,7 @@ class PdfExtractionService
         return $decoded;
     }
 
-    /**
-     * Delete temporary image file after processing.
-     * Silently skips if file no longer exists.
-     */
+    /** Delete the temporary page image after processing. Silently skips if already gone. */
     private function cleanupImage(string $imagePath): void
     {
         if (file_exists($imagePath)) {

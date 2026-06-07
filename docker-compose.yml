@@ -1,3 +1,9 @@
+# Local development environment - four containers on a shared network.
+# app: Laravel + Nginx + Horizon
+# mysql: database on port 3307 (avoids conflict with local MySQL)
+# redis: cache and queue storage
+# ollama: local AI models, auto-pulls llama3.2:1b, llama3.1:8b, nomic-embed-text on first start
+
 services:
 
   app:

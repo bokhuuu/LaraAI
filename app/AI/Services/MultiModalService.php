@@ -7,20 +7,19 @@ use Prism\Prism\Facades\Prism;
 use Prism\Prism\ValueObjects\Media\Image;
 
 /**
- * Handles vision-based AI analysis - accepts an image and a prompt,
- * sends both to a vision-capable model via Prism, returns text response.
+ * Sends images to a vision-capable AI model and returns a text response.
  *
- * Always uses the production provider (OpenRouter) because local Ollama
- * models do not support vision. Requires OPENROUTER_API_KEY in .env.
+ * Always routes to OpenRouter regardless of the default provider setting,
+ * because local Ollama models do not support image input.
  *
- * TEMPLATE USAGE: Inject wherever you need image understanding -
- * PDF page analysis, product photo description, document scanning.
- * Used internally by PdfExtractionService for page-by-page extraction.
+ * Used internally by PdfExtractionService to analyze PDF pages as images.
+ * Can also be used directly anywhere image understanding is needed.
  */
 class MultiModalService
 {
     /**
-     * Analyze an image with the given prompt.
+     * Send an image and a prompt to the vision model and return the response.
+     * The prompt tells the AI what to look for or extract from the image.
      */
     public function analyze(string $imagePath, string $prompt): string
     {

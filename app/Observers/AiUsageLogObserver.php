@@ -8,13 +8,17 @@ use App\Models\AiUsageLog;
 use Illuminate\Support\Facades\Cache;
 
 /**
- * On every new log entry, updates the running monthly cost total in Redis.
- * Enables instant budget checks without slow DB aggregate queries.
+ * Maintains a running monthly AI cost total in Redis.
+ *
+ * Triggered automatically whenever a new AiUsageLog entry is created.
+ * Incrementing a Redis value is far faster than summing DB rows,
+ * making instant budget checks possible without expensive queries.
  */
 class AiUsageLogObserver
 {
     /**
-     * Update running monthly cost total in Redis cache when a new log is created.
+     * Add this log entry's cost to the current month's Redis total.
+     * Key expires at end of month so the counter resets automatically.
      */
     public function created(AiUsageLog $aiUsageLog): void
     {
