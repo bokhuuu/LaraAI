@@ -19,23 +19,79 @@
                 },
                 "description": "Check connectivity of all AI services including database, Redis, queue and Ollama.  \nReturns 200 if all services healthy, 503 if any critical service is down."
             },
-            "response": []
-        },
-        {
-            "name": "Healthy Response",
-            "request": {
-                "auth": {
-                    "type": "noauth"
-                },
-                "method": "GET",
-                "header": [],
-                "url": {
-                    "raw": "{{base_url}}/api/ai/health",
-                    "host": ["{{base_url}}"],
-                    "path": ["api", "ai", "health"]
+            "response": [
+                {
+                    "name": "Health Check",
+                    "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/ai/health",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "ai", "health"]
+                        }
+                    },
+                    "status": "OK",
+                    "code": 200,
+                    "_postman_previewlanguage": "",
+                    "header": [
+                        {
+                            "key": "Server",
+                            "value": "nginx"
+                        },
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        },
+                        {
+                            "key": "Transfer-Encoding",
+                            "value": "chunked"
+                        },
+                        {
+                            "key": "Connection",
+                            "value": "keep-alive"
+                        },
+                        {
+                            "key": "X-Powered-By",
+                            "value": "PHP/8.4.22"
+                        },
+                        {
+                            "key": "Cache-Control",
+                            "value": "no-cache, private"
+                        },
+                        {
+                            "key": "Date",
+                            "value": "Sun, 07 Jun 2026 11:20:06 GMT"
+                        },
+                        {
+                            "key": "X-Content-Type-Options",
+                            "value": "nosniff"
+                        },
+                        {
+                            "key": "X-Frame-Options",
+                            "value": "DENY"
+                        },
+                        {
+                            "key": "X-XSS-Protection",
+                            "value": "1; mode=block"
+                        },
+                        {
+                            "key": "Referrer-Policy",
+                            "value": "strict-origin-when-cross-origin"
+                        },
+                        {
+                            "key": "Permissions-Policy",
+                            "value": "camera=(), microphone=(), geolocation=()"
+                        },
+                        {
+                            "key": "Access-Control-Allow-Origin",
+                            "value": "*"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "{\n    \"status\": \"healthy\",\n    \"services\": {\n        \"database\": \"ok\",\n        \"redis\": \"ok\",\n        \"queue\": \"ok\",\n        \"ai\": \"ok\"\n    },\n    \"timestamp\": \"2026-06-07T11:20:06+00:00\"\n}"
                 }
-            },
-            "response": []
+            ]
         },
         {
             "name": "Streaming AI Response",
@@ -49,23 +105,83 @@
                 },
                 "description": "SSE streaming endpoint. Returns AI generated text as a real-time stream using Server-Sent Events.  \nOpen in browser at /stream for live demo."
             },
-            "response": []
-        },
-        {
-            "name": "Stream Response",
-            "request": {
-                "auth": {
-                    "type": "noauth"
-                },
-                "method": "GET",
-                "header": [],
-                "url": {
-                    "raw": "{{base_url}}/stream",
-                    "host": ["{{base_url}}"],
-                    "path": ["stream"]
+            "response": [
+                {
+                    "name": "Streaming AI Response",
+                    "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/stream",
+                            "host": ["{{base_url}}"],
+                            "path": ["stream"]
+                        }
+                    },
+                    "status": "OK",
+                    "code": 200,
+                    "_postman_previewlanguage": "",
+                    "header": [
+                        {
+                            "key": "Server",
+                            "value": "nginx"
+                        },
+                        {
+                            "key": "Content-Type",
+                            "value": "text/event-stream; charset=utf-8"
+                        },
+                        {
+                            "key": "Transfer-Encoding",
+                            "value": "chunked"
+                        },
+                        {
+                            "key": "Connection",
+                            "value": "keep-alive"
+                        },
+                        {
+                            "key": "X-Powered-By",
+                            "value": "PHP/8.4.22"
+                        },
+                        {
+                            "key": "Cache-Control",
+                            "value": "no-cache, private"
+                        },
+                        {
+                            "key": "Date",
+                            "value": "Sun, 07 Jun 2026 11:20:53 GMT"
+                        },
+                        {
+                            "key": "X-Content-Type-Options",
+                            "value": "nosniff"
+                        },
+                        {
+                            "key": "X-Frame-Options",
+                            "value": "DENY"
+                        },
+                        {
+                            "key": "X-XSS-Protection",
+                            "value": "1; mode=block"
+                        },
+                        {
+                            "key": "Referrer-Policy",
+                            "value": "strict-origin-when-cross-origin"
+                        },
+                        {
+                            "key": "Permissions-Policy",
+                            "value": "camera=(), microphone=(), geolocation=()"
+                        },
+                        {
+                            "key": "Set-Cookie",
+                            "value": "XSRF-TOKEN=eyJpdiI6Ill5N3NSMWFMdHJiQ0J0cmRDUXdhbVE9PSIsInZhbHVlIjoicm1DQzVrcnZpQ2NaM0hrWDI5SjJYblpHOVRpUEx5YTI4eXZYN2hrOGRMc2E4T3R5cmNUWjhadldTNzNkYWIyeW9JVjBCUG5rM20vNURoOVpCc3F6V1VYcG8raEhDSXJna3BRT3RPQUJrMkU4Yk9FS3VmNTQ5YTZINEV0Tk9INWciLCJtYWMiOiJiZTVjYTAzZTdmYzZiYzM1ZDI5MTViYzg3YmIzYjYxMjY0M2M4NzQ4MWRmMGE4NjEyYzVlNGU2MmQxNzg5NzY5IiwidGFnIjoiIn0%3D; expires=Sun, 07 Jun 2026 13:20:53 GMT; Max-Age=7200; path=/; samesite=lax"
+                        },
+                        {
+                            "key": "Set-Cookie",
+                            "value": "laraai-session=eyJpdiI6Ikt5WUp0VjlsdTBvdEVvRUcwTTdtTmc9PSIsInZhbHVlIjoidjlLWEVGM1ZmYWhHTWxXR1R2UUc2cWQ3dDg5M0R5Q2x0N2pDY0s1cEVaR3ByeGxnRENKV3lOYTFsWUR5dHpFTldtM1NMNW1IdkZLcUNOSkJUeHVIbmROYWdMQS9pOENFQnAxNzdoaEY1S3JDNzJqalp1b1hicnVtenNqcVlOWisiLCJtYWMiOiJjZTc0YzY3MmQ4NjA0ZmI3NWNmZTcwM2Y1OTRkMTA5MjYzOGZjNmQwNzNkZjUxYmZkZDRkMTI2YTQ3YmIxNDlkIiwidGFnIjoiIn0%3D; expires=Sun, 07 Jun 2026 13:20:53 GMT; Max-Age=7200; path=/; httponly; samesite=lax"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "data: {\"text\":\"We\"}\n\ndata: {\"text\":\" don\"}\n\ndata: {\"text\":\"'t\"}\n\ndata: {\"text\":\" mention\"}\n\ndata: {\"text\":\" cars\"}\n\ndata: {\"text\":\" in\"}\n\ndata: {\"text\":\" this\"}\n\ndata: {\"text\":\" conversation\"}\n\ndata: {\"text\":\".\"}\n\ndata: {\"text\":\" I\"}\n\ndata: {\"text\":\"'d\"}\n\ndata: {\"text\":\" be\"}\n\ndata: {\"text\":\" happy\"}\n\ndata: {\"text\":\" to\"}\n\ndata: {\"text\":\" chat\"}\n\ndata: {\"text\":\" with\"}\n\ndata: {\"text\":\" you\"}\n\ndata: {\"text\":\" about\"}\n\ndata: {\"text\":\" yours\"}\n\ndata: {\"text\":\",\"}\n\ndata: {\"text\":\" or\"}\n\ndata: {\"text\":\" we\"}\n\ndata: {\"text\":\" could\"}\n\ndata: {\"text\":\" discuss\"}\n\ndata: {\"text\":\" cars\"}\n\ndata: {\"text\":\" if\"}\n\ndata: {\"text\":\" you\"}\n\ndata: {\"text\":\"'re\"}\n\ndata: {\"text\":\" interested\"}\n\ndata: {\"text\":\".\"}\n\ndata: {\"text\":\" What\"}\n\ndata: {\"text\":\" do\"}\n\ndata: {\"text\":\" you\"}\n\ndata: {\"text\":\" want\"}\n\ndata: {\"text\":\" to\"}\n\ndata: {\"text\":\" know\"}\n\ndata: {\"text\":\" about\"}\n\ndata: {\"text\":\" your\"}\n\ndata: {\"text\":\" vehicle\"}\n\ndata: {\"text\":\"?\"}\n\ndata: [DONE]\n\n"
                 }
-            },
-            "response": []
+            ]
         },
         {
             "name": "Chat UI",
@@ -79,23 +195,155 @@
                 },
                 "description": "Browser-based chat interface with streaming AI responses via Alpine.js and SSE"
             },
-            "response": []
+            "response": [
+                {
+                    "name": "Chat UI",
+                    "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/chat",
+                            "host": ["{{base_url}}"],
+                            "path": ["chat"]
+                        }
+                    },
+                    "status": "OK",
+                    "code": 200,
+                    "_postman_previewlanguage": "",
+                    "header": [
+                        {
+                            "key": "Server",
+                            "value": "nginx"
+                        },
+                        {
+                            "key": "Content-Type",
+                            "value": "text/html; charset=utf-8"
+                        },
+                        {
+                            "key": "Transfer-Encoding",
+                            "value": "chunked"
+                        },
+                        {
+                            "key": "Connection",
+                            "value": "keep-alive"
+                        },
+                        {
+                            "key": "X-Powered-By",
+                            "value": "PHP/8.4.22"
+                        },
+                        {
+                            "key": "Cache-Control",
+                            "value": "no-cache, private"
+                        },
+                        {
+                            "key": "Date",
+                            "value": "Sun, 07 Jun 2026 11:20:35 GMT"
+                        },
+                        {
+                            "key": "X-Content-Type-Options",
+                            "value": "nosniff"
+                        },
+                        {
+                            "key": "X-Frame-Options",
+                            "value": "DENY"
+                        },
+                        {
+                            "key": "X-XSS-Protection",
+                            "value": "1; mode=block"
+                        },
+                        {
+                            "key": "Referrer-Policy",
+                            "value": "strict-origin-when-cross-origin"
+                        },
+                        {
+                            "key": "Permissions-Policy",
+                            "value": "camera=(), microphone=(), geolocation=()"
+                        },
+                        {
+                            "key": "Set-Cookie",
+                            "value": "XSRF-TOKEN=eyJpdiI6IklzS2ZHbWtTc0llVTRIM1VLZDl5cHc9PSIsInZhbHVlIjoiWXRDWmVDVTZWVGpMdEdUVzBYaXlHbjFrSlk2bGwvNmJRM2pTQzdMTkVuV1UxU21oWXRTTmQwbnlMT05iUnNaUjRsNUFJcWJVRHBSaHRNWk1Nb1FyVWNTT05GQTZUK2ZVYitzVGwzM0lNbEFlRW9JUkJLSHlNL2hQeks0ancweUciLCJtYWMiOiI0YzgxMzNhYjNjOTIwMmI4ZTBlN2ZhN2Y5YTczYzhlYTQ4MzI2N2MxOGM2YzM1MzRiYmQ1ZGMyYTNkYjU0Yjk4IiwidGFnIjoiIn0%3D; expires=Sun, 07 Jun 2026 13:20:35 GMT; Max-Age=7200; path=/; samesite=lax"
+                        },
+                        {
+                            "key": "Set-Cookie",
+                            "value": "laraai-session=eyJpdiI6IitHNWtUbHFXM250bkRVL2NtcFo5ZFE9PSIsInZhbHVlIjoiTUJDdzhDYWRYUCtodkxBMWI3bEYvZFhnQk9LUExtdkZZSlc5TUlDNGF6TXNYa0gyY3ZjSlVoRUNqMmlpbEswak1HaFBnVVpGZGZONXI4L21ITitSUnhoYWJsVTVjcjU3bURSdGl3c1cvb1B0cUFEL3RaZkx4MmpxOXkzbHNpZ3oiLCJtYWMiOiI2ZGI0YWUzNGE5NWFlZjEwNDA4OTI4ZGFmYWE3NDY3YWQ2Y2IzMGQxYmUxYjkwMDIyZTFiMmQ1YmNjZDNiMGFhIiwidGFnIjoiIn0%3D; expires=Sun, 07 Jun 2026 13:20:35 GMT; Max-Age=7200; path=/; httponly; samesite=lax"
+                        },
+                        {
+                            "key": "Content-Encoding",
+                            "value": "gzip"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "<!DOCTYPE html>\n<html lang=\"en\">\n    <head>\n        <meta charset=\"UTF-8\">\n        <title>AI Assistant</title>\n        <script defer src=\"https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js\"></script>\n        <style>\n        body {\n            font-family: sans-serif;\n            max-width: 700px;\n            margin: 40px auto;\n            padding: 20px;\n            background: #f9fafb;\n        }\n\n        #messages {\n            background: white;\n            border: 1px solid #e5e7eb;\n            border-radius: 8px;\n            padding: 16px;\n            min-height: 300px;\n            max-height: 500px;\n            overflow-y: auto;\n            margin-bottom: 16px;\n        }\n\n        .message {\n            margin-bottom: 12px;\n            padding: 10px 14px;\n            border-radius: 8px;\n            line-height: 1.6;\n            white-space: pre-wrap;\n        }\n\n        .message.user {\n            background: #3b82f6;\n            color: white;\n            margin-left: 20%;\n            text-align: right;\n        }\n\n        .message.assistant {\n            background: #f3f4f6;\n            color: #111827;\n            margin-right: 20%;\n        }\n\n        .input-row {\n            display: flex;\n            gap: 8px;\n        }\n\n        input[type=\"text\"] {\n            flex: 1;\n            padding: 10px 14px;\n            border: 1px solid #d1d5db;\n            border-radius: 6px;\n            font-size: 15px;\n        }\n\n        button {\n            padding: 10px 20px;\n            background: #3b82f6;\n            color: white;\n            border: none;\n            border-radius: 6px;\n            cursor: pointer;\n            font-size: 15px;\n        }\n\n        button:disabled {\n            background: #93c5fd;\n            cursor: not-allowed;\n        }\n    </style>\n    </head>\n    <body>\n        <h2>AI Assistant</h2>\n        <div x-data=\"chat()\">\n            <div id=\"messages\">\n                <template x-for=\"(message, $index) in messages\" :key=\"$index\">\n                    <div class=\"message\" :class=\"message.role\" x-text=\"message.text\"></div>\n                </template>\n                <div x-show=\"streaming\" style=\"color: #6b7280; font-size: 13px;\">\n                ● AI is typing...\n            </div>\n            </div>\n            <div class=\"input-row\">\n                <input type=\"text\" x-model=\"input\" @keydown.enter=\"sendMessage()\" placeholder=\"Ask a question...\">\n                <button @click=\"sendMessage()\" :disabled=\"streaming\">Send</button>\n            </div>\n        </div>\n        <script>\n        function chat() {\n            return {\n                messages: [],\n                input: '',\n                streaming: false,\n                sendMessage() {\n                    if (!this.input.trim() || this.streaming) return;\n\n                    const message = this.input.trim();\n\n                    this.messages.push({\n                        role: 'user',\n                        text: message\n                    });\n\n                    this.input = '';\n\n                    this.messages.push({\n                        role: 'assistant',\n                        text: ''\n                    });\n\n                    this.streaming = true;\n\n                    const source = new EventSource('/stream?message=' + encodeURIComponent(message));\n\n                    source.onmessage = (event) => {\n                        if (event.data === '[DONE]') {\n                            source.close();\n                            this.streaming = false;\n                            return;\n                        }\n\n                        const data = JSON.parse(event.data);\n\n                        this.messages[this.messages.length - 1].text += data.text;\n                    };\n\n                    source.onerror = () => {\n                        source.close();\n                        this.streaming = false;\n                    };\n                }\n            }\n        }\n    </script>\n    </body>\n</html>"
+                }
+            ]
         },
         {
-            "name": "Chat UI Response",
+            "name": "Submit Feedback",
             "request": {
-                "auth": {
-                    "type": "noauth"
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"vote\": 1,\n    \"response_text\": \"Here are some cars under $20k...\",\n    \"comment\": \"Very helpful!\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
                 },
-                "method": "GET",
-                "header": [],
                 "url": {
-                    "raw": "{{base_url}}/chat",
+                    "raw": "{{base_url}}/api/ai/feedback",
                     "host": ["{{base_url}}"],
-                    "path": ["chat"]
-                }
+                    "path": ["api", "ai", "feedback"]
+                },
+                "description": "Submit a thumbs up (1) or thumbs down (-1) vote on an AI response. Optionally include a written comment."
             },
-            "response": []
+            "response": [
+                {
+                    "name": "Feedback Recorded",
+                    "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"vote\": 1,\n    \"response_text\": \"Here are some cars under $20k...\",\n    \"comment\": \"Very helpful!\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/ai/feedback",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "ai", "feedback"]
+                        }
+                    },
+                    "status": "Created",
+                    "code": 201,
+                    "_postman_previewlanguage": "json",
+                    "header": [],
+                    "cookie": [],
+                    "body": "{\n    \"message\": \"Feedback recorded.\",\n    \"id\": 6\n}"
+                }
+            ]
         }
     ],
     "event": [
