@@ -59,7 +59,7 @@ class ConversationService
         return $conversation->messages()
             ->orderBy('created_at')
             ->get()
-            ->map(fn(Message $message) => match ($message->role) {
+            ->map(fn (Message $message) => match ($message->role) {
                 'user' => new UserMessage($message->content),
                 'assistant' => new AssistantMessage($message->content),
                 'system' => new SystemMessage($message->content),

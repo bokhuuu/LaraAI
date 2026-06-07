@@ -36,7 +36,7 @@ class TextGenerationService
             throw new \RuntimeException('Rate limit exceeded for text generation');
         }
 
-        $cacheKey = 'ai_response:' . md5($systemPrompt . $prompt);
+        $cacheKey = 'ai_response:'.md5($systemPrompt.$prompt);
 
         $text = Cache::remember($cacheKey, ttl: config('ai.cache_ttl', 3600), callback: function () use ($prompt, $systemPrompt) {
             $request = Prism::text()

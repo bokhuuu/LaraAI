@@ -47,7 +47,7 @@ class Chat extends Command
 
             $reply = $this->conversationService->chat($conversation, $userInput);
 
-            $this->info('AI: ' . $reply);
+            $this->info('AI: '.$reply);
         }
     }
 }

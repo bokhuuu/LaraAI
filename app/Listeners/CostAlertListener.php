@@ -61,10 +61,10 @@ class CostAlertListener implements ShouldQueue
         }
 
         Http::post($webhookUrl, [
-            'text' => "🚨 *AI Cost Alert*\n" .
-                "Feature: `{$event->feature}`\n" .
-                "Model: `{$event->model}`\n" .
-                "Cost: `\${$cost}`\n" .
+            'text' => "🚨 *AI Cost Alert*\n".
+                "Feature: `{$event->feature}`\n".
+                "Model: `{$event->model}`\n".
+                "Cost: `\${$cost}`\n".
                 "Tokens: `{$event->promptTokens}` prompt / `{$event->completionTokens}` completion",
         ]);
     }

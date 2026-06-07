@@ -35,7 +35,7 @@ class WebhookController extends Controller
         }
 
         $request->validate([
-            'file' => ['required', 'file', 'max:' . config('ai.webhook.max_file_size_kb', 10240)],
+            'file' => ['required', 'file', 'max:'.config('ai.webhook.max_file_size_kb', 10240)],
         ]);
 
         $file = $request->file('file');
@@ -68,6 +68,7 @@ class WebhookController extends Controller
 
         if (! $secret) {
             Log::warning('WEBHOOK_SECRET not configured — skipping signature verification.');
+
             return true;
         }
 
@@ -77,7 +78,7 @@ class WebhookController extends Controller
             return false;
         }
 
-        $expected = 'sha256=' . hash_hmac('sha256', $request->getContent(), $secret);
+        $expected = 'sha256='.hash_hmac('sha256', $request->getContent(), $secret);
 
         return hash_equals($expected, $signature);
     }

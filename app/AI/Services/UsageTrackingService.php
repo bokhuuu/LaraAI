@@ -46,7 +46,7 @@ class UsageTrackingService
      */
     public function calculateCost(string $model, int $promptTokens, int $completionTokens): float
     {
-        $rates = config('ai.costs.' . $model, ['input' => 0, 'output' => 0]);
+        $rates = config('ai.costs.'.$model, ['input' => 0, 'output' => 0]);
 
         return ($promptTokens * $rates['input']) + ($completionTokens * $rates['output']);
     }

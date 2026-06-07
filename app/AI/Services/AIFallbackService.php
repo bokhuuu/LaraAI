@@ -21,7 +21,7 @@ class AIFallbackService
     private function getProviders(): array
     {
         return collect(config('ai.fallback'))
-            ->map(fn($p) => [
+            ->map(fn ($p) => [
                 'provider' => Provider::from($p['provider']),
                 'model' => $p['model'],
             ])
@@ -71,7 +71,7 @@ class AIFallbackService
         }
 
         throw new \RuntimeException(
-            'All AI providers failed: ' . $lastException?->getMessage()
+            'All AI providers failed: '.$lastException?->getMessage()
         );
     }
 }

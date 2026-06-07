@@ -88,7 +88,7 @@ class CarAssistantAgent extends Agent
 
         $results = array_filter(
             $cars,
-            fn($car) => strtolower($car['brand']) === strtolower($brand)
+            fn ($car) => strtolower($car['brand']) === strtolower($brand)
         );
 
         return json_encode(array_values($results));
@@ -121,7 +121,7 @@ class CarAssistantAgent extends Agent
         $service = app(EmbeddingService::class);
         $results = $service->search($query, 3);
 
-        $listings = $results->map(fn($result) => $result['document']->content)->toArray();
+        $listings = $results->map(fn ($result) => $result['document']->content)->toArray();
 
         return json_encode($listings);
     }

@@ -6,9 +6,15 @@ A reusable Laravel AI integration template covering every major AI pattern - tex
 
 ---
 
-## Why this exists
+## Why LaraAI
 
-This project shows you how to build the full AI layer: services, agents, cost tracking, rate limiting, caching, fallback providers, queues and tests. Production-ready.
+LaraAI builds the full production layer around LarAgent.
+
+LarAgent handles the agent loop - tool calling, conversation history, MCP memory. LaraAI handles everything a real business needs on top of that: cost tracking, rate limiting, response caching, provider fallback, prompt versioning, async processing, streaming, vision, PDF extraction, webhook ingestion, A/B prompt testing, user feedback and full observability.
+
+Without LaraAI, LarAgent works but is not production-ready. Together they form a complete, observable, cost-controlled AI system that can be cloned and adapted for any domain.
+
+> "I built the production infrastructure layer around LarAgent."
 
 ---
 
@@ -31,22 +37,17 @@ This project shows you how to build the full AI layer: services, agents, cost tr
 
 ## Architecture
 
-```
-app/AI/
-├── Services/
-│   ├── TextGenerationService      # Text generation with caching + rate limiting
-│   ├── EmbeddingService           # Generate vectors, store, semantic search
-│   ├── ConversationService        # Stateful conversation management
-│   ├── StructuredOutputService    # Extract structured data from text
-│   ├── ToolService                # Prism tool calling without LarAgent
-│   ├── PromptService              # Versioned system prompts in DB
-│   ├── UsageTrackingService       # Token usage + cost per AI call
-│   ├── RateLimitingService        # Per-user per-feature call limits
-│   ├── AIFallbackService          # Automatic provider fallback with retry
-│   ├── MultiModalService          # Image analysis via vision-capable models
-│   └── PdfExtractionService       # Extract structured data from PDFs via vision AI
-└── Agents/
-    └── CarAssistantAgent          # LarAgent agent with tools, RAG, MCP
+```mermaid
+flowchart TD
+    A[HTTP Layer\nStreamingController · HealthCheckController · SecurityHeaders] --> B
+    B[Laravel Infrastructure\nEvents · Listeners · Observers · Jobs · Horizon · AppServiceProvider] --> C
+    C[AI Services\nTextGeneration · Embedding · Conversation · StructuredOutput\nPrompt · Fallback · MultiModal · PdfExtraction · AbTest · Feedback] --> D
+    D[LarAgent - CarAssistantAgent\nAgent loop · Tool calling · Conversation history · MCP memory] --> E
+    E[Prism PHP\nUniversal AI provider interface] --> F
+    F[Ollama - local dev] & G[OpenRouter - production · vision · fallback]
+    C --> H[Redis\nCache · queue · rate limits]
+    C --> I[MySQL\nconversations · documents · ai_usage_logs\nprompt_versions · ai_feedback · ab_prompt_tests]
+    B --> J[Observability\nHorizon · Telescope · Sentry]
 ```
 
 **Provider strategy:**
@@ -83,7 +84,10 @@ Vision      → OpenRouter always (Ollama has no vision support)
 - Response caching - skip duplicate AI calls with hashed cache keys
 - Automatic fallback - if primary provider fails, retry with secondary
 - Async AI jobs - `ShouldQueue` jobs with retry, batching, failure handling
-- Health check endpoint - verify all AI services are reachable
+- Webhook ingestion - receive files from external systems, verify HMAC-SHA256 signature, process async
+- A/B prompt testing - route sessions to competing prompt variants, track positive vote rate per variant
+- User feedback loop - thumbs up/down votes on AI responses stored in DB, linked to A/B variants
+- Health check endpoint - real embedding call verifies full AI pipeline, not just server ping
 - Config-driven - zero hardcoded values, everything via `config/ai.php` + `.env`
 - Horizon dashboard - real-time queue monitoring at `/horizon`
 - Telescope integration - full request/job/query debugging at `/telescope`
@@ -100,10 +104,10 @@ Vision      → OpenRouter always (Ollama has no vision support)
 
 ### Code Quality
 
-- 34 Pest tests passing - services, jobs, observers, mocked AI responses
+- 47 Pest tests passing - services, jobs, observers, controllers, mocked AI responses
 - Clean service architecture - one responsibility per class
 - Docblocks on every class and method
-- Laravel Pint formatting enforced across all 84 files
+- Laravel Pint formatting enforced
 
 ---
 
@@ -127,21 +131,42 @@ docker exec LaraAI php artisan migrate
 docker exec LaraAI php artisan db:seed
 ```
 
-Then open `http://localhost` in your browser.
+Then open `http://localhost:8080` in your browser.
 
 ---
 
 ## API Endpoints
 
-| Method | Endpoint         | Description                      |
-| ------ | ---------------- | -------------------------------- |
-| GET    | `/api/ai/health` | Health check for all AI services |
-| GET    | `/stream`        | SSE streaming AI response        |
-| GET    | `/chat`          | Browser chat interface           |
-| GET    | `/horizon`       | Queue monitoring dashboard       |
-| GET    | `/telescope`     | Development debugging dashboard  |
+| Method | Endpoint           | Description                              |
+| ------ | ------------------ | ---------------------------------------- |
+| GET    | `/api/ai/health`   | Health check - verifies full AI pipeline |
+| POST   | `/api/ai/feedback` | Submit thumbs up/down on AI response     |
+| POST   | `/api/webhook`     | Receive file from external system        |
+| GET    | `/stream`          | SSE streaming AI response                |
+| GET    | `/chat`            | Browser chat interface                   |
+| GET    | `/horizon`         | Queue monitoring dashboard               |
+| GET    | `/telescope`       | Development debugging dashboard          |
 
 Import `postman_collection.json` into Postman to test all endpoints immediately.
+
+---
+
+## Database Tables
+
+| Table                         | Purpose                                           |
+| ----------------------------- | ------------------------------------------------- |
+| `conversations`               | Conversation sessions                             |
+| `messages`                    | Messages per conversation (role/content)          |
+| `documents`                   | Text + embedding vectors for RAG                  |
+| `ai_usage_logs`               | Token usage and cost per AI call                  |
+| `prompt_versions`             | Versioned system prompts                          |
+| `ai_feedback`                 | User thumbs up/down votes on AI responses         |
+| `ab_prompt_tests`             | A/B test definitions with two competing prompts   |
+| `ab_prompt_results`           | Per-session variant assignments and vote outcomes |
+| `laragent_messages`           | LarAgent conversation history                     |
+| `laragent_session_identities` | LarAgent session metadata                         |
+| `failed_jobs`                 | Failed job records                                |
+| `job_batches`                 | Batch job tracking                                |
 
 ---
 
@@ -149,15 +174,16 @@ Import `postman_collection.json` into Postman to test all endpoints immediately.
 
 To use this template for a new domain (e.g. real estate):
 
-| Component           | What to Change                                                                  |
-| ------------------- | ------------------------------------------------------------------------------- |
-| `CarAssistantAgent` | Delete. Scaffold your own Agent extending LarAgent.                             |
-| `AnalyzeCarJob`     | Delete. Scaffold your own domain job. Pass your schema via the constructor.     |
-| `CarListingsSeeder` | Delete. Scaffold your own domain seeder with real data.                         |
-| `searchByBrand()`   | Replace with your domain search tool.                                           |
-| `getAllCars()`      | Replace with your domain DB query (e.g. `YourModel::all()`).                    |
-| `prompt_versions`   | Create new prompts for your domain.                                             |
-| `config/ai.php`     | Update models, providers, rate limits and add your production model cost rates. |
+| Component           | What to Change                                          |
+| ------------------- | ------------------------------------------------------- |
+| `CarAssistantAgent` | Delete. Scaffold your own Agent extending LarAgent.     |
+| `AnalyzeCarJob`     | Delete. Scaffold your own domain job.                   |
+| `ProcessWebhookJob` | Delete. Scaffold your own file processing logic.        |
+| `CarListingsSeeder` | Delete. Scaffold your own domain seeder with real data. |
+| `searchByBrand()`   | Replace with your domain search tool.                   |
+| `getAllCars()`      | Replace with your domain DB query.                      |
+| `prompt_versions`   | Create new prompts for your domain.                     |
+| `config/ai.php`     | Update models, providers, rate limits and cost rates.   |
 
 Everything else - services, infrastructure, config - stays identical.
 
@@ -165,18 +191,27 @@ Everything else - services, infrastructure, config - stays identical.
 
 ## Known Limitations
 
-- **Ollama model size** - large models (llama3.1:8b) require 8GB+ RAM. Smaller hardware should use `llama3.2:1b` for all features
-- **MCP memory server** - requires Node.js in the runtime environment. Not available in serverless deployments
-- **OpenRouter costs** - production costs vary by model and provider. Monitor via `/horizon` and cost alert threshold in `config/ai.php`
-- **Streaming + conversation history** - the `/chat` endpoint uses stateless streaming. Full conversation history requires `ConversationService` separately
-- **RAG quality** - semantic search quality depends on seeded data volume. Meaningful results require 50+ indexed documents
+- **RAG at scale** - `EmbeddingService::search()` loads all documents into PHP memory for comparison. For 1000+ documents switch to PostgreSQL with the pgvector extension for DB-level vector search.
+- **Context window** - `ConversationService` sends the full message history on every turn. For very long conversations consider summarization. LarAgent has built-in summarization for agent conversations.
+- **Ollama model size** - large models (llama3.1:8b) require 8GB+ RAM. Smaller hardware should use `llama3.2:1b`.
+- **MCP memory server** - requires Node.js in the runtime environment. Not available in serverless deployments.
+- **Streaming + conversation history** - the `/chat` endpoint uses stateless streaming. Full conversation history requires `ConversationService` separately.
+- **Webhook signature** - HMAC-SHA256 verification with shared secret. For higher security consider rotating secrets or per-sender keys.
 
 ---
 
 ## Roadmap
 
-- ⬜ Demo GIF - end-to-end chat UI showing real AI answers in the README
-- ⬜ Architecture diagram - visual system diagram showing all layers and connections
-- ⬜ Webhook support - automatically process incoming PDF files via HTTP webhook
-- ⬜ A/B prompt testing - swap system prompts and track which performs better
-- ⬜ User feedback loop - thumbs up/down on AI responses stored in DB
+- ✅ Text generation, structured output, tool calling, RAG, embeddings
+- ✅ LarAgent with tools, MCP memory, database history
+- ✅ Streaming SSE to browser
+- ✅ Cost tracking, rate limiting, response caching, provider fallback
+- ✅ Prompt versioning with rollback
+- ✅ Async jobs, event-driven architecture, model observers
+- ✅ Multi-modal vision + PDF extraction
+- ✅ Docker, GitHub Actions CI, Postman collection
+- ✅ Security hardening, DB indexes, Sentry
+- ✅ Health check with real embedding pipeline verification
+- ✅ User feedback loop - thumbs up/down stored in DB
+- ✅ A/B prompt testing - variant assignment, vote tracking, results comparison
+- ✅ Webhook support - HMAC-verified file ingestion, async processing

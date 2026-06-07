@@ -57,7 +57,7 @@ class PdfExtractionService
      */
     private function convertPageToImage(Pdf $pdf, int $page): string
     {
-        $imagePath = sys_get_temp_dir() . '/pdf_page_' . $page . '_' . uniqid() . '.jpg';
+        $imagePath = sys_get_temp_dir().'/pdf_page_'.$page.'_'.uniqid().'.jpg';
 
         $pdf->selectPage($page)->save($imagePath);
 
@@ -86,9 +86,9 @@ class PdfExtractionService
         $fields = implode(', ', $schema);
 
         return 'Extract the following fields from this image as a JSON array of objects. '
-            . "Each object should contain: {$fields}. "
-            . 'Return only valid JSON array, no explanation, no markdown, no code blocks. '
-            . 'If the page contains no relevant data, return an empty array [].';
+            ."Each object should contain: {$fields}. "
+            .'Return only valid JSON array, no explanation, no markdown, no code blocks. '
+            .'If the page contains no relevant data, return an empty array [].';
     }
 
     /**

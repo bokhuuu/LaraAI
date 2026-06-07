@@ -10,4 +10,4 @@ Route::get('/', function () {
 
 // AI endpoints
 Route::get('/stream', [StreamingController::class, 'stream'])->name('ai.stream');
-Route::get('/chat', fn() => view('ai.chat'))->name('ai.chat');
+Route::get('/chat', fn () => view('ai.chat'))->name('ai.chat');

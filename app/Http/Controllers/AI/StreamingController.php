@@ -46,7 +46,7 @@ class StreamingController extends Controller
 
             foreach ($stream as $chunk) {
                 if ($chunk instanceof TextDeltaEvent) {
-                    echo 'data: ' . json_encode(['text' => $chunk->delta]) . "\n\n";
+                    echo 'data: '.json_encode(['text' => $chunk->delta])."\n\n";
                     if (ob_get_level() > 0) {
                         ob_flush();
                     }

@@ -1,10 +1,10 @@
 <?php
 
+use App\Jobs\ProcessWebhookJob;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
-use App\Jobs\ProcessWebhookJob;
 
 uses(RefreshDatabase::class);
 
@@ -16,7 +16,7 @@ beforeEach(function () {
 
 function makeSignature(string $body, string $secret): string
 {
-    return 'sha256=' . hash_hmac('sha256', $body, $secret);
+    return 'sha256='.hash_hmac('sha256', $body, $secret);
 }
 
 it('accepts a valid webhook request and queues the job', function () {
