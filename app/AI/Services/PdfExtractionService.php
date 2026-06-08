@@ -11,6 +11,9 @@ use Spatie\PdfToImage\Pdf;
  * Pages are processed one by one, results merged into a single array.
  * Temporary image files are created per page and deleted immediately after processing.
  * Schema is passed at call time - no domain logic lives here.
+ * 
+ * Callers are responsible for filtering out incomplete results
+ * (e.g. products with null or empty required fields) after extraction.
  *
  * Requires Ghostscript and Imagick installed in the environment.
  */
@@ -35,7 +38,11 @@ class PdfExtractionService
         $results = [];
 
         for ($page = 1; $page <= $pageCount; $page++) {
-            $imagePath = $this->convertPageToImage($pdf, $page);
+            try {
+                $imagePath = $this->convertPageToImage($pdf, $page);
+            } catch (\Exception $e) {
+                continue;
+            }
 
             try {
                 $pageData = $this->extractFromImage($imagePath, $schema);
@@ -57,7 +64,7 @@ class PdfExtractionService
      */
     private function convertPageToImage(Pdf $pdf, int $page): string
     {
-        $imagePath = sys_get_temp_dir().'/pdf_page_'.$page.'_'.uniqid().'.jpg';
+        $imagePath = sys_get_temp_dir() . '/pdf_page_' . $page . '_' . uniqid() . '.jpg';
 
         $pdf->selectPage($page)->save($imagePath);
 
@@ -85,10 +92,18 @@ class PdfExtractionService
     {
         $fields = implode(', ', $schema);
 
-        return 'Extract the following fields from this image as a JSON array of objects. '
-            ."Each object should contain: {$fields}. "
-            .'Return only valid JSON array, no explanation, no markdown, no code blocks. '
-            .'If the page contains no relevant data, return an empty array [].';
+        return "You are an expert data extraction assistant. Your task is to extract product information from catalog pages.\n\n"
+            . "### INSTRUCTIONS:\n"
+            . "1. Extract ALL products visible on the provided image.\n"
+            . "2. If the image shows two catalog pages side by side, extract products from BOTH sides.\n"
+            . "3. Return the result as a valid JSON array of objects.\n"
+            . "4. Each object MUST contain the following fields: {$fields}.\n"
+            . "5. All field values must be strings — never arrays or objects.\n"
+            . "6. If no products are present (cover page, table of contents, company intro, factory photos) return an empty array [].\n\n"
+            . "### CONSTRAINTS:\n"
+            . "- Do NOT provide any explanation or markdown formatting.\n"
+            . "- Do NOT wrap output in code blocks.\n"
+            . "- Output raw valid JSON only.";
     }
 
     /**
