@@ -156,4 +156,14 @@ return [
         'secret' => env('WEBHOOK_SECRET'),
         'max_file_size_kb' => env('WEBHOOK_MAX_FILE_SIZE_KB', 10240),
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Max Tokens
+    |--------------------------------------------------------------------------
+    | Maximum tokens for AI response.
+    | NOTE: usingMaxTokens() not yet supported in current Prism version.
+    | Add ->usingMaxTokens(config('ai.max_tokens')) when Prism adds support.
+    */
+    'max_tokens' => env('AI_MAX_TOKENS', 4096),
 ];

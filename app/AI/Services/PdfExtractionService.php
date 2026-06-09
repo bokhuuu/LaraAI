@@ -92,18 +92,21 @@ class PdfExtractionService
     {
         $fields = implode(', ', $schema);
 
-        return "You are an expert data extraction assistant. Your task is to extract product information from catalog pages.\n\n"
-            . "### INSTRUCTIONS:\n"
-            . "1. Extract ALL products visible on the provided image.\n"
-            . "2. If the image shows two catalog pages side by side, extract products from BOTH sides.\n"
-            . "3. Return the result as a valid JSON array of objects.\n"
-            . "4. Each object MUST contain the following fields: {$fields}.\n"
-            . "5. All field values must be strings — never arrays or objects.\n"
-            . "6. If no products are present (cover page, table of contents, company intro, factory photos) return an empty array [].\n\n"
-            . "### CONSTRAINTS:\n"
-            . "- Do NOT provide any explanation or markdown formatting.\n"
-            . "- Do NOT wrap output in code blocks.\n"
-            . "- Output raw valid JSON only.";
+        return "You are an automated Data Extraction Agent. Your task is to process catalog images and extract every single product listed.\n\n"
+            . "### SCANNING PROTOCOL (CRITICAL):\n"
+            . "1. SYSTEMATIC SCAN: Scan the image from top to bottom, left to right.\n"
+            . "2. EXHAUSTIVE EXTRACTION: Do not skip any products. If 10 items are visible, extract 10 objects.\n"
+            . "3. SIDE-BY-SIDE PAGES: If the image shows two pages, process the left side then the right side.\n"
+            . "4. VERIFICATION: Before finalizing, perform a mental count of products identified and ensure the JSON array length matches.\n\n"
+            . "### DATA SCHEMA:\n"
+            . "Extract the following fields for every product: {$fields}.\n"
+            . "- All field values MUST be strings. Never use arrays or objects within fields.\n"
+            . "- If a value is missing for a product, return null.\n\n"
+            . "### OUTPUT REQUIREMENTS:\n"
+            . "- Return ONLY a raw JSON array.\n"
+            . "- Do NOT include any explanations, preambles, or post-scripts.\n"
+            . "- Do NOT use markdown formatting.\n"
+            . "- If no products are found on this page, return an empty array [].";
     }
 
     /**
