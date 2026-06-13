@@ -104,7 +104,7 @@ Vision      → OpenRouter always (Ollama has no vision support)
 
 ### Code Quality
 
-- 47 Pest tests passing - services, jobs, observers, controllers, mocked AI responses
+- 51 Pest tests passing - services, jobs, observers, controllers, mocked AI responses
 - Clean service architecture - one responsibility per class
 - Docblocks on every class and method
 - Laravel Pint formatting enforced
@@ -197,6 +197,7 @@ Everything else - services, infrastructure, config - stays identical.
 - **MCP memory server** - requires Node.js in the runtime environment. Not available in serverless deployments.
 - **Streaming + conversation history** - the `/chat` endpoint uses stateless streaming. Full conversation history requires `ConversationService` separately.
 - **Webhook signature** - HMAC-SHA256 verification with shared secret. For higher security consider rotating secrets or per-sender keys.
+- **PII redaction** - not implemented. Add scrubbing layer before AI calls in production.
 
 ---
 
@@ -215,3 +216,4 @@ Everything else - services, infrastructure, config - stays identical.
 - ✅ User feedback loop - thumbs up/down stored in DB
 - ✅ A/B prompt testing - variant assignment, vote tracking, results comparison
 - ✅ Webhook support - HMAC-verified file ingestion, async processing
+- ✅ Token budget middleware - circuit breaker for monthly token spend per user

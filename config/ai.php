@@ -166,4 +166,17 @@ return [
     | Add ->usingMaxTokens(config('ai.max_tokens')) when Prism adds support.
     */
     'max_tokens' => env('AI_MAX_TOKENS', 4096),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Token Budget
+    |--------------------------------------------------------------------------
+    | Monthly token limit across all AI calls. Acts as a circuit breaker -
+    | requests are blocked once the limit is reached until the month resets.
+    | Set AI_TOKEN_BUDGET_ENABLED=false to disable checks entirely.
+    */
+    'token_budget' => [
+        'monthly_limit' => env('AI_MONTHLY_TOKEN_BUDGET', 1000000),
+        'enabled'       => env('AI_TOKEN_BUDGET_ENABLED', true),
+    ],
 ];
