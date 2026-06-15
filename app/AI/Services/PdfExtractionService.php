@@ -11,7 +11,7 @@ use Spatie\PdfToImage\Pdf;
  * Pages are processed one by one, results merged into a single array.
  * Temporary image files are created per page and deleted immediately after processing.
  * Schema is passed at call time - no domain logic lives here.
- * 
+ *
  * Callers are responsible for filtering out incomplete results
  * (e.g. products with null or empty required fields) after extraction.
  *
@@ -64,7 +64,7 @@ class PdfExtractionService
      */
     private function convertPageToImage(Pdf $pdf, int $page): string
     {
-        $imagePath = sys_get_temp_dir() . '/pdf_page_' . $page . '_' . uniqid() . '.jpg';
+        $imagePath = sys_get_temp_dir().'/pdf_page_'.$page.'_'.uniqid().'.jpg';
 
         $pdf->selectPage($page)->save($imagePath);
 
@@ -93,20 +93,20 @@ class PdfExtractionService
         $fields = implode(', ', $schema);
 
         return "You are an automated Data Extraction Agent. Your task is to process catalog images and extract every single product listed.\n\n"
-            . "### SCANNING PROTOCOL (CRITICAL):\n"
-            . "1. SYSTEMATIC SCAN: Scan the image from top to bottom, left to right.\n"
-            . "2. EXHAUSTIVE EXTRACTION: Do not skip any products. If 10 items are visible, extract 10 objects.\n"
-            . "3. SIDE-BY-SIDE PAGES: If the image shows two pages, process the left side then the right side.\n"
-            . "4. VERIFICATION: Before finalizing, perform a mental count of products identified and ensure the JSON array length matches.\n\n"
-            . "### DATA SCHEMA:\n"
-            . "Extract the following fields for every product: {$fields}.\n"
-            . "- All field values MUST be strings. Never use arrays or objects within fields.\n"
-            . "- If a value is missing for a product, return null.\n\n"
-            . "### OUTPUT REQUIREMENTS:\n"
-            . "- Return ONLY a raw JSON array.\n"
-            . "- Do NOT include any explanations, preambles, or post-scripts.\n"
-            . "- Do NOT use markdown formatting.\n"
-            . "- If no products are found on this page, return an empty array [].";
+            ."### SCANNING PROTOCOL (CRITICAL):\n"
+            ."1. SYSTEMATIC SCAN: Scan the image from top to bottom, left to right.\n"
+            ."2. EXHAUSTIVE EXTRACTION: Do not skip any products. If 10 items are visible, extract 10 objects.\n"
+            ."3. SIDE-BY-SIDE PAGES: If the image shows two pages, process the left side then the right side.\n"
+            ."4. VERIFICATION: Before finalizing, perform a mental count of products identified and ensure the JSON array length matches.\n\n"
+            ."### DATA SCHEMA:\n"
+            ."Extract the following fields for every product: {$fields}.\n"
+            ."- All field values MUST be strings. Never use arrays or objects within fields.\n"
+            ."- If a value is missing for a product, return null.\n\n"
+            ."### OUTPUT REQUIREMENTS:\n"
+            ."- Return ONLY a raw JSON array.\n"
+            ."- Do NOT include any explanations, preambles, or post-scripts.\n"
+            ."- Do NOT use markdown formatting.\n"
+            .'- If no products are found on this page, return an empty array [].';
     }
 
     /**

@@ -177,6 +177,6 @@ return [
     */
     'token_budget' => [
         'monthly_limit' => env('AI_MONTHLY_TOKEN_BUDGET', 1000000),
-        'enabled'       => env('AI_TOKEN_BUDGET_ENABLED', true),
+        'enabled' => env('AI_TOKEN_BUDGET_ENABLED', true),
     ],
 ];

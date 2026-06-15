@@ -30,7 +30,10 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=3
-
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
     steps:
       - uses: actions/checkout@v4.2.2
 
@@ -63,4 +66,7 @@ jobs:
           DB_DATABASE: laraai_test
           DB_USERNAME: root
           DB_PASSWORD: root
+          REDIS_HOST: 127.0.0.1
         run: php artisan test
+      - name: Check formatting
+        run: ./vendor/bin/pint --test
